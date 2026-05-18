@@ -19,17 +19,16 @@
         <!-- Stats rapides -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-indigo-500">
-                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Total</p>
-                <p class="text-3xl font-black text-[#131b2e]">{{ subStore.subscriptions.length }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Total clients</p>
+                <p class="text-3xl font-black text-[#131b2e]">{{ subStore.latestPerClient.length }}</p>
             </div>
             <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-green-500">
                 <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Actifs</p>
                 <p class="text-3xl font-black text-green-600">{{ subStore.activeSubscriptions.length }}</p>
             </div>
             <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-red-400">
-                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Expirés</p>
-                <p class="text-3xl font-black text-red-500">{{ subStore.subscriptions.length -
-                    subStore.activeSubscriptions.length }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Expirés (non renouvelés)</p>
+                <p class="text-3xl font-black text-red-500">{{ subStore.expiredSubscriptions.length }}</p>
             </div>
         </div>
 
@@ -145,12 +144,12 @@
         </div>
 
         <!-- ═══════════════════════════════════════
-         MODAL CRÉATION ABONNEMENT
-    ═══════════════════════════════════════ -->
+             MODAL CRÉATION ABONNEMENT
+        ═══════════════════════════════════════ -->
         <el-dialog v-model="showCreateModal" title="Nouvel abonnement" width="500px" :close-on-click-modal="false"
             @closed="resetCreateForm">
             <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-position="top" size="large">
-                <!-- Sélection client -->
+
                 <el-form-item label="Client" prop="client_id">
                     <el-select v-model="createForm.client_id" placeholder="Rechercher un client..." filterable
                         style="width: 100%" :loading="clientStore.loading">
@@ -159,7 +158,6 @@
                     </el-select>
                 </el-form-item>
 
-                <!-- Sélection type d'abonnement -->
                 <el-form-item label="Type d'abonnement" prop="subscription_type_id">
                     <el-select v-model="createForm.subscription_type_id" placeholder="Choisir un type..."
                         style="width: 100%" :loading="typeStore.loading" @change="onTypeChange">
@@ -168,7 +166,6 @@
                     </el-select>
                 </el-form-item>
 
-                <!-- Aperçu du type sélectionné -->
                 <div v-if="selectedType" class="bg-[#f2f3ff] rounded-xl p-4 mb-2">
                     <div class="flex justify-between items-center">
                         <div>
@@ -199,8 +196,8 @@
         </el-dialog>
 
         <!-- ═══════════════════════════════════════
-         DRAWER DÉTAIL ABONNEMENT
-    ═══════════════════════════════════════ -->
+             DRAWER DÉTAIL ABONNEMENT
+        ═══════════════════════════════════════ -->
         <el-drawer v-model="showDetail" direction="rtl" size="440px" :with-header="false">
             <div v-if="selectedSub" class="p-6">
 
@@ -217,7 +214,7 @@
                     </el-tag>
                 </div>
 
-                <!-- Détails -->
+                <!-- Détails abonnement actuel -->
                 <div class="space-y-3 mb-8">
                     <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
                         <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Type</span>
@@ -240,15 +237,22 @@
                     </div>
                 </div>
 
-                <!-- Historique des abonnements du client -->
+                <!-- Historique complet du client -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <p class="text-sm font-bold uppercase tracking-widest text-[#464554]">Historique client</p>
-                            <p class="text-xs text-slate-500">Tous les abonnements de {{ selectedSub.client }}</p>
+                            <p class="text-sm font-bold uppercase tracking-widest text-[#464554]">
+                                Historique client
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                Tous les abonnements de {{ selectedSub.client }}
+                            </p>
                         </div>
-                        <span class="text-xs font-semibold text-[#4f46e5]">{{ clientHistory.length }} ligne(s)</span>
+                        <span class="text-xs font-semibold text-[#4f46e5]">
+                            {{ clientHistory.length }} ligne(s)
+                        </span>
                     </div>
+
                     <div class="space-y-3">
                         <div v-if="clientHistory.length === 0"
                             class="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
@@ -259,8 +263,10 @@
                             <div class="flex justify-between items-center gap-4">
                                 <div>
                                     <p class="font-semibold text-[#131b2e]">{{ history.type }}</p>
-                                    <p class="text-sm text-[#6b7280]">{{ history.startDate }} → {{ history.endDate }}
+                                    <p class="text-sm text-[#6b7280]">
+                                        {{ history.startDate }} → {{ history.endDate }}
                                     </p>
+                                    <p class="text-xs text-[#464554] mt-1">{{ history.price }} FCFA</p>
                                 </div>
                                 <el-tag :type="history.status === 'Actif' ? 'success' : 'danger'" size="small" round>
                                     {{ history.status }}
@@ -275,7 +281,7 @@
                     </div>
                 </div>
 
-                <!-- Bouton renouveler -->
+                <!-- Actions -->
                 <el-button type="success" size="large" class="w-full mb-3"
                     style="border-radius: 12px; font-weight: 700;" @click="handleRenew(selectedSub)">
                     <el-icon class="mr-2">
@@ -284,7 +290,6 @@
                     Renouveler l'abonnement
                 </el-button>
 
-                <!-- Bouton nouvel abonnement pour ce client -->
                 <el-button type="primary" size="large" class="w-full"
                     style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;"
                     @click="openCreateModalForClient(selectedSub)">
@@ -304,12 +309,7 @@
 import { useClientStore } from '@/stores/client'
 import { useSubscriptionStore } from '@/stores/subscription'
 import { useSubscriptionTypeStore } from '@/stores/subscriptionType'
-import {
-    Loading,
-    Plus,
-    Refresh,
-    Search, View
-} from '@element-plus/icons-vue'
+import { Loading, Plus, Refresh, Search, View } from '@element-plus/icons-vue'
 import Swal from 'sweetalert2'
 import { computed, onMounted, ref } from 'vue'
 
@@ -317,7 +317,7 @@ const subStore = useSubscriptionStore()
 const typeStore = useSubscriptionTypeStore()
 const clientStore = useClientStore()
 
-// ── État ─────────────────────────────────────────
+// ── État ─────────────────────────────────────────────────────────────────
 const search = ref('')
 const filterStatus = ref('')
 const currentPage = ref(1)
@@ -330,24 +330,21 @@ const selectedSub = ref(null)
 const selectedType = ref(null)
 const createFormRef = ref(null)
 
-const createForm = ref({
-    client_id: null,
-    subscription_type_id: null,
-})
+const createForm = ref({ client_id: null, subscription_type_id: null })
 
 const createRules = {
     client_id: [{ required: true, message: 'Sélectionnez un client', trigger: 'change' }],
     subscription_type_id: [{ required: true, message: "Sélectionnez un type d'abonnement", trigger: 'change' }],
 }
 
-// ── Chargement initial ───────────────────────────
+// ── Chargement initial ────────────────────────────────────────────────────
 onMounted(async () => {
     await subStore.fetchAll()
     await typeStore.fetchAll()
     await clientStore.fetchAll()
 })
 
-// ── Dates calculées pour l'aperçu ───────────────
+// ── Dates aperçu modal ────────────────────────────────────────────────────
 const today = new Date().toLocaleDateString('fr-FR')
 
 const computedEndDate = computed(() => {
@@ -357,42 +354,16 @@ const computedEndDate = computed(() => {
     return end.toLocaleDateString('fr-FR')
 })
 
-// ── Les abonnements les plus récents par client ──
-const currentSubscriptions = computed(() => {
-    const grouped = {}
-    subStore.subscriptions.forEach(sub => {
-        const key = sub.client_id ?? sub.client
-        const existing = grouped[key]
-        if (!existing) {
-            grouped[key] = sub
-            return
-        }
-
-        const existingDate = new Date(existing.startDate)
-        const currentDate = new Date(sub.startDate)
-        if (currentDate > existingDate) {
-            grouped[key] = sub
-        }
-    })
-    return Object.values(grouped)
-})
-
+// ── Historique client (drawer) ────────────────────────────────────────────
 const clientHistory = computed(() => subStore.clientSubscriptions || [])
 
-// ── Quand on change le type → aperçu ────────────
-function onTypeChange(typeId) {
-    selectedType.value = typeStore.types.find(t => t.id === typeId) || null
-}
-
-// ── Filtres + pagination ─────────────────────────
+// ── Filtres — basé sur latestPerClient (1 ligne par client) ───────────────
 const filteredSubs = computed(() => {
-    let list = currentSubscriptions.value
+    let list = subStore.latestPerClient
     const q = search.value.toLowerCase()
 
     if (q) {
-        list = list.filter(s =>
-            `${s.client} ${s.type}`.toLowerCase().includes(q)
-        )
+        list = list.filter(s => `${s.client} ${s.type}`.toLowerCase().includes(q))
     }
     if (filterStatus.value) {
         list = list.filter(s => s.status === filterStatus.value)
@@ -410,19 +381,19 @@ const paginatedClientHistory = computed(() => {
     return clientHistory.value.slice(start, start + historyPageSize.value)
 })
 
-// ── Ouvrir modal création (vide ou pré-rempli) ───
+// ── Changer de type → aperçu ──────────────────────────────────────────────
+function onTypeChange(typeId) {
+    selectedType.value = typeStore.types.find(t => t.id === typeId) || null
+}
+
+// ── Ouvrir modal création ─────────────────────────────────────────────────
 function openCreateModal(clientId = null) {
-    createForm.value = {
-        client_id: clientId,
-        subscription_type_id: null,
-    }
+    createForm.value = { client_id: clientId, subscription_type_id: null }
     selectedType.value = null
     showCreateModal.value = true
 }
 
-// ── Ouvrir modal depuis le détail (client pré-rempli) ──
 function openCreateModalForClient(sub) {
-    // on cherche l'id du client dans la liste
     const client = clientStore.clients.find(
         c => `${c.firstName} ${c.lastName}` === sub.client
     )
@@ -430,27 +401,23 @@ function openCreateModalForClient(sub) {
     openCreateModal(client?.id || null)
 }
 
-// ── Créer un abonnement ──────────────────────────
+// ── Créer un abonnement ───────────────────────────────────────────────────
 async function handleCreate() {
     await createFormRef.value.validate(async (valid) => {
         if (!valid) return
-
         try {
             await subStore.create({
                 client_id: createForm.value.client_id,
                 subscription_type_id: createForm.value.subscription_type_id,
             })
-
             showCreateModal.value = false
-
             Swal.fire({
                 icon: 'success',
                 title: 'Abonnement créé !',
-                text: `L'abonnement a été créé avec succès.`,
+                text: "L'abonnement a été créé avec succès.",
                 confirmButtonColor: '#4f46e5',
                 confirmButtonText: 'Super !',
             })
-
             resetCreateForm()
         } catch {
             Swal.fire({
@@ -463,18 +430,15 @@ async function handleCreate() {
     })
 }
 
-// ── Ouvrir le détail ─────────────────────────────
+// ── Ouvrir le détail + charger historique ────────────────────────────────
 async function openDetail(sub) {
     selectedSub.value = sub
     historyPage.value = 1
-    const clientId = sub.client_id ?? clientStore.clients.find(c => `${c.firstName} ${c.lastName}` === sub.client)?.id
-    if (clientId) {
-        await subStore.fetchByClient(clientId)
-    }
+    await subStore.fetchByClient(sub.client_id)
     showDetail.value = true
 }
 
-// ── Renouveler un abonnement ─────────────────────
+// ── Renouveler ────────────────────────────────────────────────────────────
 async function handleRenew(sub) {
     const result = await Swal.fire({
         icon: 'question',
@@ -493,7 +457,6 @@ async function handleRenew(sub) {
     try {
         await subStore.renew(sub.id)
         showDetail.value = false
-
         Swal.fire({
             icon: 'success',
             title: 'Renouvelé !',
@@ -512,14 +475,14 @@ async function handleRenew(sub) {
     }
 }
 
-// ── Reset ────────────────────────────────────────
+// ── Reset ─────────────────────────────────────────────────────────────────
 function resetCreateForm() {
     createForm.value = { client_id: null, subscription_type_id: null }
     selectedType.value = null
     createFormRef.value?.resetFields()
 }
 
-// ── Helpers ──────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────
 function getAvatarColor(name) {
     const colors = [
         '#4f46e5', '#7c3aed', '#db2777', '#059669',

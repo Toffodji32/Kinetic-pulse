@@ -175,8 +175,23 @@ async function handleLogin() {
         error.value = ''
         try {
             await authStore.login(loginForm.value.email, loginForm.value.password)
-            const redirect = route.query.redirect || '/shop'
-            router.push(redirect)
+
+            const roles = authStore.user?.roles || []
+
+            // admin ou réceptionniste qui se connecte via shop-login → dashboard
+            if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_USER')) {
+                router.push({ name: 'dashboard' })
+                return
+            }
+
+            // client → redirect ou shop-home
+            const redirect = route.query.redirect
+            const safeRedirect = redirect && redirect !== '/shop/login' && redirect !== '/login'
+                ? redirect
+                : '/shop'
+
+            router.push(safeRedirect)
+
         } catch {
             error.value = authStore.error || 'Email ou mot de passe incorrect'
         } finally {
@@ -197,14 +212,16 @@ async function handleRegister() {
                 registerForm.value.phone,
                 registerForm.value.password
             )
+
             // auto-login après inscription
             authStore.token = result.token
             authStore.user = result.user
             localStorage.setItem('token', result.token)
             localStorage.setItem('user', JSON.stringify(result.user))
 
-            const redirect = route.query.redirect || '/shop'
-            router.push(redirect)
+            // ← toujours vers shop-home après inscription
+            router.push({ name: 'shop-home' })
+
         } catch {
             error.value = shopStore.error || 'Erreur lors de la création du compte'
         } finally {

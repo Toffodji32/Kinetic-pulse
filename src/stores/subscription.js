@@ -3,23 +3,64 @@ import { defineStore } from 'pinia'
 
 export const useSubscriptionStore = defineStore('subscription', {
   state: () => ({
-    subscriptions: [], // liste globale
-    clientSubscriptions: [], // abonnements d'un client précis
-    subscription: null, // détail d'un seul
+    subscriptions: [],
+    clientSubscriptions: [],
+    subscription: null,
     loading: false,
     error: null,
   }),
 
   getters: {
-    // filtre rapide côté front : uniquement les actifs
-    activeSubscriptions: (state) => state.subscriptions.filter((s) => s.status === 'Actif'),
+    // 1 entrée par client — le dernier abonnement de chaque client
+    latestPerClient: (state) => {
+      const grouped = {}
+      state.subscriptions.forEach((sub) => {
+        const key = sub.client_id
+        if (
+          !grouped[key] ||
+          new Date(sub.endDate.split('/').reverse().join('-')) >
+            new Date(grouped[key].endDate.split('/').reverse().join('-'))
+        ) {
+          grouped[key] = sub
+        }
+      })
+      return Object.values(grouped)
+    },
 
-    // expirés
-    expiredSubscriptions: (state) => state.subscriptions.filter((s) => s.status === 'Expiré'),
+    // Actifs = dernier abonnement du client est Actif
+    activeSubscriptions: (state) => {
+      const grouped = {}
+      state.subscriptions.forEach((sub) => {
+        const key = sub.client_id
+        if (
+          !grouped[key] ||
+          new Date(sub.endDate.split('/').reverse().join('-')) >
+            new Date(grouped[key].endDate.split('/').reverse().join('-'))
+        ) {
+          grouped[key] = sub
+        }
+      })
+      return Object.values(grouped).filter((s) => s.status === 'Actif')
+    },
+
+    // Expirés = dernier abonnement du client est Expiré (non renouvelé)
+    expiredSubscriptions: (state) => {
+      const grouped = {}
+      state.subscriptions.forEach((sub) => {
+        const key = sub.client_id
+        if (
+          !grouped[key] ||
+          new Date(sub.endDate.split('/').reverse().join('-')) >
+            new Date(grouped[key].endDate.split('/').reverse().join('-'))
+        ) {
+          grouped[key] = sub
+        }
+      })
+      return Object.values(grouped).filter((s) => s.status === 'Expiré')
+    },
   },
 
   actions: {
-    // GET /api/subscriptions
     async fetchAll() {
       this.loading = true
       this.error = null
@@ -33,7 +74,6 @@ export const useSubscriptionStore = defineStore('subscription', {
       }
     },
 
-    // GET /api/subscriptions/{id}
     async fetchOne(id) {
       this.loading = true
       try {
@@ -44,7 +84,6 @@ export const useSubscriptionStore = defineStore('subscription', {
       }
     },
 
-    // GET /api/subscriptions/client/{id}
     async fetchByClient(clientId) {
       this.loading = true
       this.error = null
@@ -58,8 +97,6 @@ export const useSubscriptionStore = defineStore('subscription', {
       }
     },
 
-    // POST /api/subscriptions
-    // payload: { client_id, subscription_type_id }
     async create(payload) {
       this.loading = true
       this.error = null
@@ -75,14 +112,13 @@ export const useSubscriptionStore = defineStore('subscription', {
       }
     },
 
-    // POST /api/subscriptions/{id}/renew
     async renew(id) {
       this.loading = true
       this.error = null
       try {
         const { data } = await api.post(`/subscriptions/${id}/renew`)
         await this.fetchAll()
-        return data // { message, new_subscription_id }
+        return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur renouvellement'
         throw err
