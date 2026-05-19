@@ -59,7 +59,7 @@
                     <div class="absolute inset-0 bg-indigo-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <div class="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 font-bold text-indigo-600 text-sm">
                             <el-icon><View /></el-icon>
-                            Voir le produit
+                            Voir
                         </div>
                     </div>
 
