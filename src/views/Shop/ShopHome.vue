@@ -340,10 +340,13 @@ function scrollToCatalog() {
     catalogRef.value?.scrollIntoView({ behavior: 'smooth' })
 }
 
+
 function formatCurrency(value) {
     return new Intl.NumberFormat('fr-FR', {
-        style: 'currency', currency: 'EUR',
-    }).format(value ?? 0)
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(value ?? 0) + ' FCFA'
 }
 </script>
 
