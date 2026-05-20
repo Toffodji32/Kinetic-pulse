@@ -43,5 +43,5 @@ export const useCartStore = defineStore('cart', {
     },
   },
 
-  persist: true, // survit au refresh grâce à pinia-plugin-persistedstate
+
 })
