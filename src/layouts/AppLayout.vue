@@ -96,34 +96,17 @@
             <!-- TOPBAR -->
             <header
                 class="sticky top-0 z-40 w-full flex justify-between items-center h-20 px-8 bg-white/80 backdrop-blur-xl shadow-sm">
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <span
-                            class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
-                        <input
-                            class="pl-10 pr-4 py-2 bg-[#f2f3ff] border-none rounded-full w-64 focus:ring-2 focus:ring-indigo-500 text-sm outline-none"
-                            placeholder="Search analytics..." type="text" />
+
+                <div></div>
+
+                <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
+                    <div class="text-right">
+                        <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
+                        <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté</p>
                     </div>
-                </div>
-
-                <div class="flex items-center gap-6">
-                    <button class="relative text-slate-500 hover:text-indigo-600 transition-colors">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                    </button>
-                    <button class="text-slate-500 hover:text-indigo-600 transition-colors">
-                        <span class="material-symbols-outlined">help</span>
-                    </button>
-
-                    <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
-                        <div class="text-right">
-                            <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
-                            <p class="text-[10px] text-slate-500 uppercase font-semibold">Super Admin</p>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
-                            {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
-                        </div>
+                    <div
+                        class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
+                        {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
                     </div>
                 </div>
             </header>
