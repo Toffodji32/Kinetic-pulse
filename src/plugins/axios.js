@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
 
 });
+console.log('API URL:', import.meta.env.VITE_API_URL)
 
 // Intercepteur pour ajouter le token JWT
 api.interceptors.request.use((config) => {
