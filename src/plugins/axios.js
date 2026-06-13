@@ -3,7 +3,7 @@ import { useAuthStore } from '../stores/auth';
 import router from '../router';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://kenetic-pulse-api-production.up.railway.app',
 
 });
 console.log('API URL:', import.meta.env.VITE_API_URL)
