@@ -86,7 +86,7 @@
                 <div v-for="product in paginatedProducts" :key="product.id"
                     class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
                     <div class="h-48 bg-[#f2f3ff] flex items-center justify-center relative overflow-hidden">
-                        <img v-if="product.image" :src="`http://127.0.0.1:8000${product.image}`"
+                        <img v-if="product.image" :src="mediaUrl(product.image)"
                             class="w-full h-full object-cover" alt="" />
                         <el-icon v-else class="text-6xl text-indigo-200">
                             <ShoppingBag />
@@ -149,7 +149,7 @@
                             <div class="flex items-center gap-3 py-2">
                                 <div
                                     class="w-12 h-12 rounded-xl bg-[#f2f3ff] flex items-center justify-center overflow-hidden flex-shrink-0">
-                                    <img v-if="row.image" :src="`http://127.0.0.1:8000${row.image}`"
+                                    <img v-if="row.image" :src="mediaUrl(row.image)"
                                         class="w-full h-full object-cover" />
                                     <el-icon v-else class="text-indigo-300 text-xl">
                                         <ShoppingBag />
@@ -347,7 +347,7 @@
             <div v-if="selectedProduct" class="p-6 h-full overflow-y-auto">
 
                 <div class="h-56 bg-[#f2f3ff] rounded-2xl flex items-center justify-center overflow-hidden mb-6">
-                    <img v-if="selectedProduct.image" :src="`http://127.0.0.1:8000${selectedProduct.image}`"
+                    <img v-if="selectedProduct.image" :src="mediaUrl(selectedProduct.image)"
                         class="w-full h-full object-cover rounded-2xl" />
                     <el-icon v-else class="text-8xl text-indigo-200">
                         <ShoppingBag />
@@ -440,6 +440,7 @@ import {
     View
 } from '@element-plus/icons-vue'
 import Swal from 'sweetalert2'
+import { mediaUrl } from '@/utils/media'
 import { computed, nextTick, onMounted, ref } from 'vue'
 
 const productStore = useProductStore()

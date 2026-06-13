@@ -51,7 +51,7 @@
                 <!-- Image -->
                 <div class="h-48 bg-gray-50 flex items-center justify-center overflow-hidden relative cursor-pointer"
                     @click="openDetail(product)">
-                    <img v-if="product.image" :src="`http://127.0.0.1:8000${product.image}`"
+                    <img v-if="product.image" :src="mediaUrl(product.image)"
                         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     <el-icon v-else class="text-6xl text-gray-200"><ShoppingBag /></el-icon>
 
@@ -131,7 +131,7 @@
                         <!-- Image produit -->
                         <div class="h-64 bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
                             <img v-if="selectedProduct?.image"
-                                :src="`http://127.0.0.1:8000${selectedProduct.image}`"
+                                :src="mediaUrl(selectedProduct.image)"
                                 class="w-full h-full object-cover" />
                             <el-icon v-else class="text-9xl text-indigo-100"><ShoppingBag /></el-icon>
 
@@ -249,6 +249,7 @@
 
 <script setup>
 import { useCartStore } from '@/stores/cart'
+import { mediaUrl } from '@/utils/media'
 import { useCategoryStore } from '@/stores/category'
 import { useShopStore } from '@/stores/shop'
 import {

@@ -244,7 +244,7 @@
                         :style="{ backgroundColor: getAvatarColor(selectedClient.firstName) }">
                         {{ selectedClient.firstName?.charAt(0) }}{{ selectedClient.lastName?.charAt(0) }}
                     </div>
-                    <img v-else :src="`http://127.0.0.1:8000/${selectedClient.photo}`"
+                    <img v-else :src="mediaUrl(selectedClient.photo)"
                         class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-indigo-100" />
                     <h2 class="text-2xl font-black text-[#131b2e]">
                         {{ selectedClient.firstName }} {{ selectedClient.lastName }}
@@ -301,7 +301,7 @@
                 <div v-if="selectedClient.qrCode" class="mb-8">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">QR Code</h3>
                     <div class="bg-white border border-indigo-100 rounded-xl p-4 flex flex-col items-center shadow-sm">
-                        <img :src="`http://127.0.0.1:8000/${selectedClient.qrCode}`"
+                        <img :src="mediaUrl(selectedClient.qrCode)"
                             class="w-40 h-40 object-contain" alt="QR Code" />
                         <p class="text-xs text-[#464554] mt-2">Scanner pour valider l'accès</p>
                     </div>
@@ -344,6 +344,7 @@ import {
     View
 } from '@element-plus/icons-vue'
 import Swal from 'sweetalert2'
+import { mediaUrl } from '@/utils/media'
 import { computed, onMounted, ref } from 'vue'
 
 const clientStore = useClientStore()

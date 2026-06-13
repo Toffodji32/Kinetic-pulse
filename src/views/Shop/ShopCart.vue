@@ -27,7 +27,7 @@
                     <!-- Image -->
                     <div
                         class="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                        <img v-if="item.product.image" :src="`http://127.0.0.1:8000${item.product.image}`"
+                        <img v-if="item.product.image" :src="mediaUrl(item.product.image)"
                             class="w-full h-full object-cover" />
                         <el-icon v-else class="text-3xl text-gray-200">
                             <ShoppingBag />
@@ -119,6 +119,7 @@
 
 <script setup>
 import { useCartStore } from '@/stores/cart'
+import { mediaUrl } from '@/utils/media'
 import Swal from 'sweetalert2'
 import {
     ShoppingCart, ShoppingBag, Plus, Minus, Delete

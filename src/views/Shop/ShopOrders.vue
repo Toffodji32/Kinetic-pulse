@@ -46,7 +46,7 @@
                         <div v-for="item in order.items" :key="item.product" class="flex items-center gap-4">
                             <div
                                 class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                                <img v-if="item.image" :src="`http://127.0.0.1:8000${item.image}`"
+                                <img v-if="item.image" :src="mediaUrl(item.image)"
                                     class="w-full h-full object-cover" />
                                 <el-icon v-else class="text-gray-300 text-xl">
                                     <ShoppingBag />
@@ -197,6 +197,7 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
+import { mediaUrl } from '@/utils/media'
 import { useShopStore } from '@/stores/shop'
 import {
     Loading, Box, ShoppingBag, Clock,

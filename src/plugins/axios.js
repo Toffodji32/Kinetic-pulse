@@ -2,15 +2,29 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import router from '../router';
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://kenetic-pulse-api-production.up.railway.app',
+const PRODUCTION_API = 'https://kenetic-pulse-api-production.up.railway.app/api'
 
+function resolveApiBaseUrl() {
+  let url = (import.meta.env.VITE_API_URL || PRODUCTION_API).trim().replace(/\/+$/, '')
+
+  if (!url.endsWith('/api')) {
+    url = `${url}/api`
+  }
+
+  // Évite Mixed Content quand Vercel a une URL http:// dans VITE_API_URL
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http://')) {
+    url = `https://${url.slice('http://'.length)}`
+  }
+
+  return url
+}
+
+const api = axios.create({
+  baseURL: resolveApiBaseUrl(),
 });
-console.log('API URL:', import.meta.env.VITE_API_URL)
 
 // Intercepteur pour ajouter le token JWT
 api.interceptors.request.use((config) => {
-  /* const authStore = useAuthStore(); */
   const token = localStorage.getItem("token")
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -20,7 +34,6 @@ api.interceptors.request.use((config) => {
     delete config.headers['Content-Type']
   }
 
-  
   return config;
 });
 
@@ -32,8 +45,8 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       console.warn('JWT expiré ou non valide, déconnexion...');
-      authStore.logout(); // supprime le token
-      router.push('/login'); // redirige vers login
+      authStore.logout();
+      router.push('/login');
     }
 
     return Promise.reject(error);
