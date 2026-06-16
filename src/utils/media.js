@@ -1,4 +1,4 @@
-const PRODUCTION_API = 'https://kenetic-pulse-api-production.up.railway.app'
+const PRODUCTION_API = 'https://kenetic-pulse-api.onrender.com'
 
 function resolveMediaBaseUrl() {
   const fromEnv =

@@ -345,6 +345,7 @@ import {
 } from '@element-plus/icons-vue'
 import Swal from 'sweetalert2'
 import { mediaUrl } from '@/utils/media'
+import { sendQrCodeEmail } from '@/services/emailjs'
 import { computed, onMounted, ref } from 'vue'
 
 const clientStore = useClientStore()
@@ -412,27 +413,24 @@ async function handleCreate() {
         if (!valid) return
 
         try {
-            console.log('📋 Données envoyées à l\'API:', form.value)
-
             const created = await clientStore.create(form.value)
-
-            console.log('✅ Réponse complète du serveur:', created)
-            console.log('📧 Email envoyé?:', created.emailSent)
-            console.log('🔍 Détails de la réponse:', {
-                clientId: created.id,
-                email: created.email,
-                emailSent: created.emailSent,
-                qrCode: created.qrCode,
-                emailError: created.emailError,
-                message: created.message,
-            })
 
             showCreateModal.value = false
 
-            // ← message différent selon si l'email a été envoyé
-            const emailMsg = created.emailSent
-                ? `<p class="text-sm text-green-600 mt-2">✅ QR code envoyé par email à <strong>${form.value.email}</strong></p>`
-                : `<p class="text-sm text-amber-600 mt-2">⚠️ Client créé mais l'email n'a pas pu être envoyé.${created.emailError ? ` <br/><small>Erreur: ${created.emailError}</small>` : ''}</p>`
+            let emailMsg = ''
+            if (created.qrCode) {
+                const qrCodeUrl = mediaUrl(created.qrCode)
+                try {
+                    await sendQrCodeEmail({
+                        toEmail: form.value.email,
+                        toName: `${form.value.firstName} ${form.value.lastName}`,
+                        qrCodeUrl,
+                    })
+                    emailMsg = `<p class="text-sm text-green-600 mt-2">✅ QR code envoyé par email à <strong>${form.value.email}</strong></p>`
+                } catch (emailErr) {
+                    emailMsg = `<p class="text-sm text-amber-600 mt-2">⚠️ Client créé mais l'email n'a pas pu être envoyé.</p>`
+                }
+            }
 
             Swal.fire({
                 icon: 'success',
@@ -443,25 +441,13 @@ async function handleCreate() {
                 borderRadius: '16px',
             })
 
-            // ← ouvre directement le détail avec le QR code
             openDetail(created.id)
-
             resetForm()
         } catch (err) {
-            console.error('❌ Erreur création client:', err)
-            console.error('📦 Détails de l\'erreur:', {
-                message: err.message,
-                response: err.response?.data,
-                status: err.response?.status,
-                erreur_api: err.response?.data?.error,
-                erreur_mail: err.response?.data?.emailError,
-                full_error: err,
-            })
-
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                html: `<p>${clientStore.error || 'Impossible de créer le client.'}</p>${err.response?.data?.emailError ? `<p class="text-sm text-red-600 mt-2">📧 Erreur mail: ${err.response.data.emailError}</p>` : ''}`,
+                html: `<p>${clientStore.error || 'Impossible de créer le client.'}</p>`,
                 confirmButtonColor: '#4f46e5',
             })
         }
