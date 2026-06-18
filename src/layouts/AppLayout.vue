@@ -77,6 +77,15 @@
                     <span class="material-symbols-outlined">settings</span>
                     <span class="text-sm font-medium">Settings</span>
                 </router-link>
+
+                <hr class="my-2 border-slate-200/50">
+
+                <router-link to="/admin/gym/subscription"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
+                    :class="route.path === '/admin/gym/subscription' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    <span class="material-symbols-outlined">workspace_premium</span>
+                    <span class="text-sm font-medium">Abonnement</span>
+                </router-link>
             </nav>
 
             <!-- Footer Sidebar -->
@@ -111,6 +120,23 @@
                 </div>
             </header>
 
+            <!-- TRIAL BANNER -->
+            <div v-if="subscriptionBanner.show"
+                class="mx-8 mt-4 px-6 py-3 rounded-xl flex items-center justify-between gap-4"
+                :class="subscriptionBanner.class"
+                style="transition: all 0.3s ease;">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl">{{ subscriptionBanner.icon }}</span>
+                    <p class="text-sm font-medium">{{ subscriptionBanner.message }}</p>
+                </div>
+                <router-link v-if="subscriptionBanner.actionLink"
+                    :to="subscriptionBanner.actionLink"
+                    class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
+                    :class="subscriptionBanner.actionClass">
+                    {{ subscriptionBanner.actionText }}
+                </router-link>
+            </div>
+
             <!-- PAGE CONTENT -->
             <main class="p-8 max-w-7xl mx-auto">
                 <router-view />
@@ -120,17 +146,57 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useGymAuthStore } from '@/stores/gymAuth'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const gymAuthStore = useGymAuthStore()
+
+const subscriptionBanner = computed(() => {
+    const s = gymAuthStore.subscription
+    if (!s) return { show: false }
+
+    if (s.status === 'expired') {
+        return {
+            show: true,
+            class: 'bg-red-50 border border-red-200 text-red-700',
+            icon: 'error',
+            message: 'Votre abonnement a expire. Renouvelez-le pour continuer a utiliser Kinetic Pulse.',
+            actionLink: '/admin/gym/subscription',
+            actionText: 'Renouveler',
+            actionClass: 'bg-red-600 text-white hover:bg-red-700',
+        }
+    }
+
+    if (s.status === 'trial' && s.daysLeft <= 3) {
+        return {
+            show: true,
+            class: 'bg-amber-50 border border-amber-200 text-amber-700',
+            icon: 'timer',
+            message: `Votre essai gratuit expire dans ${s.daysLeft} jour${s.daysLeft > 1 ? 's' : ''}. Souscrivez a la formule Premium.`,
+            actionLink: '/admin/gym/subscription',
+            actionText: 'Souscrire',
+            actionClass: 'bg-amber-600 text-white hover:bg-amber-700',
+        }
+    }
+
+    return { show: false }
+})
 
 const handleLogout = () => {
     authStore.logout()
     router.push('/login')
 }
+
+onMounted(() => {
+    if (gymAuthStore.token) {
+        gymAuthStore.fetchSubscription().catch(() => {})
+    }
+})
 </script>
 
 <style>

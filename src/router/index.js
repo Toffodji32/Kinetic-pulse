@@ -4,9 +4,11 @@ import { useAuthStore } from '@/stores/auth'
 import Categories from '@/views/Dashboard/Categories.vue'
 import Clients from '@/views/Dashboard/Clients.vue'
 import Dashboard from '@/views/Dashboard/Dashboard.vue'
+import GymSubscriptionPage from '@/views/Dashboard/GymSubscriptionPage.vue'
 import Orders from '@/views/Dashboard/Orders.vue'
 import Payments from '@/views/Dashboard/Payments.vue'
 import Products from '@/views/Dashboard/Products.vue'
+import RegisterGym from '@/views/RegisterGym.vue'
 import Roles from '@/views/Dashboard/Roles.vue'
 import Settings from '@/views/Dashboard/Settings.vue'
 import Subscriptions from '@/views/Dashboard/Subscriptions.vue'
@@ -38,6 +40,12 @@ const router = createRouter({
       meta: { public: true },
     },
     {
+      path: '/register-gym',
+      name: 'register-gym',
+      component: RegisterGym,
+      meta: { public: true },
+    },
+    {
       path: '/scan',
       name: 'scan',
       component: ScanView,
@@ -60,6 +68,7 @@ const router = createRouter({
         { path: 'users',         name: 'admin-users',         component: Users         },
         { path: 'roles',         name: 'admin-roles',         component: Roles         },
         { path: 'categories',    name: 'admin-categories',    component: Categories    },
+        { path: 'gym/subscription', name: 'admin-gym-subscription', component: GymSubscriptionPage },
         { path: 'settings',      name: 'admin-settings',      component: Settings      },
       ],
     },
