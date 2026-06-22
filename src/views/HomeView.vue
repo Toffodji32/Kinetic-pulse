@@ -86,18 +86,18 @@
 
       <div class="container mx-auto px-6 relative z-10 text-center">
         <h2 class="font-headline text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tighter text-gym-on-surface">
-          TON QR CODE<br/>
+          PRÊT À LANCER<br/>
           <span class="text-gym-primary" style="text-shadow: 0 0 40px rgba(105,218,255,0.5);">
-            T'ATTEND.
+            VOTRE SALLE ?
           </span>
         </h2>
         <p class="text-gym-on-surface-variant text-xl max-w-2xl mx-auto mb-12">
-          Inscription en 30 secondes. QR code généré instantanément. Accès à la salle, boutique et suivi de livraison — tout dans ta poche.
+          Créez votre salle de sport en 2 minutes. QR codes, abonnements, boutique en ligne — on s'occupe de tout. Vous gérez, on digitalise.
         </p>
         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <router-link to="/shop/login">
+          <router-link to="/register-gym">
             <button class="px-12 py-5 bg-gradient-to-r from-gym-primary to-gym-primary-container text-gym-on-primary font-black rounded-full text-xl shadow-[0_0_50px_-10px_rgba(105,218,255,0.5)] hover:scale-105 active:scale-95 transition-all">
-              Créer mon QR code
+              Créer votre salle de gym
             </button>
           </router-link>
           <button

@@ -22,28 +22,28 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gym-primary opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-gym-primary"></span>
           </span>
-          Accès QR · Abonnements · Boutique en ligne — tout en un
+          SaaS de gestion · QR Code · Abonnements · Boutique en ligne
         </div>
 
         <!-- Titre principal -->
         <h1 class="font-headline text-5xl md:text-7xl font-black leading-tight tracking-tighter text-gym-on-surface">
-          Ta salle.<br />
+          Votre salle.<br />
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-gym-primary to-gym-secondary">
-            Ton QR code.
+            Zéro papier.
           </span><br />
-          Ton rythme.
+          Zéro contrainte.
         </h1>
 
         <!-- Sous-titre -->
         <p class="text-gym-on-surface-variant text-lg md:text-xl max-w-xl leading-relaxed">
-          Kinetic Pulse révolutionne ta gestion de salle — accès instantané par QR code, abonnements automatisés, boutique de suppléments livrée chez toi. Le tout piloté depuis un dashboard temps réel.
+          Lancez votre salle de sport moderne en un clic. QR codes, abonnements, boutique, dashboard temps réel — tout est inclus. Vos membres scannent, vous encaissez, on s'occupe du reste.
         </p>
 
         <!-- CTA buttons -->
         <div class="flex flex-wrap gap-4 pt-4">
-          <router-link to="/shop/login">
+          <router-link to="/register-gym">
             <button class="px-8 py-4 bg-gradient-to-r from-gym-primary to-gym-primary-container text-gym-on-primary font-bold rounded-full text-lg shadow-[0_0_30px_-5px_rgba(105,218,255,0.4)] hover:scale-105 active:scale-95 transition-all">
-              Créer mon accès
+              Créer votre salle de gym
             </button>
           </router-link>
           <button
@@ -54,19 +54,19 @@
           </button>
         </div>
 
-        <!-- Stats clés tirées du vrai projet -->
+        <!-- Stats clés -->
         <div class="flex flex-wrap gap-8 pt-12">
           <div class="flex flex-col">
-            <span class="text-3xl font-headline font-bold text-gym-primary">QR Code</span>
-            <span class="text-sm font-label text-gym-on-surface-variant uppercase tracking-wider">Accès instantané</span>
+            <span class="text-3xl font-headline font-bold text-gym-primary">SaaS clé en main</span>
+            <span class="text-sm font-label text-gym-on-surface-variant uppercase tracking-wider">Zéro installation, zéro serveur</span>
           </div>
           <div class="flex flex-col">
             <span class="text-3xl font-headline font-bold text-gym-secondary">3 modes</span>
             <span class="text-sm font-label text-gym-on-surface-variant uppercase tracking-wider">Espèces · Carte · Mobile Money</span>
           </div>
           <div class="flex flex-col">
-            <span class="text-3xl font-headline font-bold text-gym-tertiary">Livraison</span>
-            <span class="text-sm font-label text-gym-on-surface-variant uppercase tracking-wider">Domicile ou retrait en salle</span>
+            <span class="text-3xl font-headline font-bold text-gym-tertiary">Dashboard temps réel</span>
+            <span class="text-sm font-label text-gym-on-surface-variant uppercase tracking-wider">Clients, accès, ventes en un coup d'œil</span>
           </div>
         </div>
 

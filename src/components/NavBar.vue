@@ -24,20 +24,11 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <!-- Accès boutique client -->
         <router-link
-          to="/shop/login"
-          class="text-gym-on-surface-variant hover:text-gym-primary text-sm font-semibold px-4 py-2 rounded-full border border-gym-outline-variant/40 hover:border-gym-primary/40 transition-all"
-        >
-          Se connecter
-        </router-link>
-
-        <!-- CTA principal -->
-        <router-link
-          to="/shop/login"
+          to="/register-gym"
           class="bg-gradient-to-r from-gym-primary to-gym-primary-container text-gym-on-primary px-6 py-2.5 rounded-full font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gym-primary/20"
         >
-          Rejoindre
+          Créer votre salle de gym
         </router-link>
       </div>
 

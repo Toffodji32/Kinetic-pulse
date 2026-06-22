@@ -9,7 +9,7 @@ import Orders from '@/views/Dashboard/Orders.vue'
 import Payments from '@/views/Dashboard/Payments.vue'
 import Products from '@/views/Dashboard/Products.vue'
 import RegisterGym from '@/views/RegisterGym.vue'
-import Roles from '@/views/Dashboard/Roles.vue'
+import GymInfo from '@/views/Dashboard/GymInfo.vue'
 import Settings from '@/views/Dashboard/Settings.vue'
 import Subscriptions from '@/views/Dashboard/Subscriptions.vue'
 import Users from '@/views/Dashboard/Users.vue'
@@ -66,7 +66,7 @@ const router = createRouter({
         { path: 'orders',        name: 'admin-orders',        component: Orders        },
         { path: 'products',      name: 'admin-products',      component: Products      },
         { path: 'users',         name: 'admin-users',         component: Users         },
-        { path: 'roles',         name: 'admin-roles',         component: Roles         },
+        { path: 'gym/info',      name: 'admin-gym-info',      component: GymInfo      },
         { path: 'categories',    name: 'admin-categories',    component: Categories    },
         { path: 'gym/subscription', name: 'admin-gym-subscription', component: GymSubscriptionPage },
         { path: 'settings',      name: 'admin-settings',      component: Settings      },

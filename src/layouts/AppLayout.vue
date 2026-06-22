@@ -58,13 +58,6 @@
                     <span class="text-sm font-medium">Users</span>
                 </router-link>
 
-                <router-link to="/admin/roles"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/roles' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
-                    <span class="material-symbols-outlined">security</span>
-                    <span class="text-sm font-medium">Rôles</span>
-                </router-link>
-
                 <router-link to="/admin/categories"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
                     :class="route.path === '/admin/categories' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
@@ -91,6 +84,21 @@
             <!-- Footer Sidebar -->
             <div class="mt-auto pt-6 border-t border-slate-200/50 flex flex-col gap-1">
 
+                <router-link to="/admin/gym/info"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 text-slate-500 hover:bg-white/50 mb-2">
+                    <div v-if="gymAuthStore.gym?.logo"
+                        class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
+                        <img :src="gymAuthStore.gym.logo" class="w-full h-full object-cover" />
+                    </div>
+                    <div v-else
+                        class="w-9 h-9 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm flex-shrink-0">
+                        {{ gymAuthStore.gym?.name?.charAt(0).toUpperCase() || 'G' }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-slate-800 truncate">{{ gymAuthStore.gym?.name || 'Ma salle' }}</p>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400">Gérer la salle</p>
+                    </div>
+                </router-link>
 
                 <button @click="handleLogout"
                     class="flex items-center gap-3 px-4 py-2 text-red-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 w-full text-left">
@@ -108,7 +116,7 @@
 
                 <div></div>
 
-                <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
+                <router-link to="/admin/settings" class="flex items-center gap-3 pl-6 border-l border-slate-200 hover:opacity-80 transition-opacity">
                     <div class="text-right">
                         <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
                         <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté</p>
@@ -117,7 +125,7 @@
                         class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
                         {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
                     </div>
-                </div>
+                </router-link>
             </header>
 
             <!-- TRIAL BANNER -->
