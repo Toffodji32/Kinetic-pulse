@@ -1,159 +1,108 @@
 <template>
-  <section id="pricing" class="py-24 bg-gym-surface-low">
+  <section id="pricing" class="py-24 bg-[#050508]">
     <div class="container mx-auto px-6">
 
-      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-widest text-gym-primary mb-3 block">
-            Aucun frais caché
-          </span>
-          <h2 class="font-headline text-4xl font-bold mb-4 text-gym-on-surface">
-            Choisis ton niveau.<br/>
-            <span class="text-gym-secondary">Dépasse-le.</span>
-          </h2>
-          <p class="text-gym-on-surface-variant max-w-md">
-            Accès QR inclus dans tous les plans. Paiement sur place — espèces, carte ou Mobile Money.
-          </p>
-        </div>
-
-        <!-- Toggle mensuel / annuel -->
-        <div class="flex items-center gap-4 bg-gym-surface-container p-1 rounded-full border border-gym-outline-variant/10">
-          <button
-            @click="billingCycle = 'monthly'"
-            :class="billingCycle === 'monthly'
-              ? 'px-6 py-2 rounded-full text-sm font-bold bg-gym-primary text-gym-on-primary'
-              : 'px-6 py-2 rounded-full text-sm font-bold text-gym-on-surface-variant hover:text-gym-on-surface transition-colors'"
-          >
-            Mensuel
-          </button>
-          <button
-            @click="billingCycle = 'annual'"
-            :class="billingCycle === 'annual'
-              ? 'px-6 py-2 rounded-full text-sm font-bold bg-gym-primary text-gym-on-primary'
-              : 'px-6 py-2 rounded-full text-sm font-bold text-gym-on-surface-variant hover:text-gym-on-surface transition-colors'"
-          >
-            Annuel <span class="text-gym-secondary">−20%</span>
-          </button>
-        </div>
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3 block">
+          Investissez dans votre salle
+        </span>
+        <h2 class="font-headline text-4xl font-bold mb-4 text-white">
+          Deux formules.<br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Un seul objectif : votre croissance.</span>
+        </h2>
+        <p class="text-zinc-400">Pas de frais cachés. Pas d'engagement. Annulez à tout moment.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div
-          v-for="plan in plans"
-          :key="plan.key"
-          @click="selectedPlan = plan.key"
-          :class="[
-            'relative cursor-pointer p-10 rounded-[2.5rem] flex flex-col h-full transition-all duration-300',
-            selectedPlan === plan.key
-              ? 'border-gym-primary shadow-[0_0_50px_-10px_rgba(105,218,255,0.2)] scale-105 z-10 bg-gym-surface-container border-2'
-              : 'bg-gym-surface-low border border-gym-outline-variant/10 hover:border-gym-outline-variant/40'
-          ]"
-        >
-          <!-- Badge populaire -->
-          <div v-if="plan.badge"
-            class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gym-primary text-gym-on-primary px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest whitespace-nowrap">
-            {{ plan.badge }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div v-for="plan in plans" :key="plan.key"
+          class="relative rounded-[2rem] p-10 flex flex-col border transition-all duration-300"
+          :class="plan.popular
+            ? 'bg-gradient-to-b from-indigo-600/10 to-transparent border-indigo-500/40 scale-105 shadow-[0_0_60px_-15px_rgba(99,102,241,0.3)]'
+            : 'bg-white/[0.03] border-white/[0.06] hover:border-white/20'">
+
+          <div v-if="plan.popular"
+            class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
+            Recommandé
           </div>
 
-          <h3 class="font-headline text-2xl font-bold mb-2 text-gym-on-surface">{{ plan.name }}</h3>
-          <p class="text-gym-on-surface-variant text-sm mb-6">{{ plan.tagline }}</p>
+          <h3 class="font-headline text-2xl font-bold mb-2 text-white">{{ plan.name }}</h3>
+          <p class="text-zinc-400 text-sm mb-6">{{ plan.tagline }}</p>
 
           <div class="flex items-baseline gap-1 mb-8">
-            <span class="text-4xl font-headline font-black"
-              :class="selectedPlan === plan.key ? 'text-gym-primary' : 'text-gym-on-surface'">
-              {{ billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice }}
-            </span>
-            <span class="text-gym-on-surface-variant text-sm">FCFA / {{ billingCycle === 'monthly' ? 'mois' : 'an' }}</span>
+            <span class="text-5xl font-headline font-black text-white">{{ plan.price }}</span>
+            <span class="text-zinc-500 text-sm">FCFA / mois</span>
           </div>
 
-          <ul class="space-y-3 mb-10 flex-grow">
-            <li v-for="feature in plan.features" :key="feature" class="flex items-start gap-3 text-sm">
-              <span class="material-symbols-outlined text-gym-primary text-lg flex-shrink-0 mt-0.5">check_circle</span>
-              <span class="text-gym-on-surface-variant">{{ feature }}</span>
+          <ul class="space-y-4 mb-10 flex-grow">
+            <li v-for="feat in plan.features" :key="feat" class="flex items-start gap-3 text-sm">
+              <span class="material-symbols-outlined text-indigo-400 text-lg flex-shrink-0 mt-0.5">check_circle</span>
+              <span class="text-zinc-300">{{ feat }}</span>
+            </li>
+            <li v-for="miss in plan.missing" :key="miss"
+              class="flex items-start gap-3 text-sm opacity-40">
+              <span class="material-symbols-outlined text-zinc-600 text-lg flex-shrink-0 mt-0.5">remove_circle_outline</span>
+              <span class="text-zinc-500">{{ miss }}</span>
             </li>
           </ul>
 
-          <router-link to="/shop/login">
+          <router-link to="/register-gym" class="w-full">
             <button
-              :class="[
-                'w-full py-4 rounded-2xl font-bold transition-all',
-                selectedPlan === plan.key
-                  ? 'bg-gradient-to-r from-gym-primary to-gym-primary-container text-gym-on-primary shadow-lg shadow-gym-primary/20 hover:scale-105'
-                  : 'bg-gym-surface-variant text-gym-on-surface hover:bg-gym-surface-high'
-              ]"
-            >
+              class="w-full py-4 rounded-2xl font-bold text-sm transition-all"
+              :class="plan.popular
+                ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                : 'bg-white/10 hover:bg-white/20 text-white'">
               {{ plan.cta }}
             </button>
           </router-link>
         </div>
       </div>
 
-      <!-- Note de bas de page -->
-      <p class="text-center text-gym-on-surface-variant text-sm mt-12">
-        Paiement sur place uniquement — espèces, carte bancaire ou Mobile Money.
-        Accès QR code généré automatiquement à l'inscription.
+      <p class="text-center text-zinc-500 text-sm mt-12 max-w-xl mx-auto">
+        <span class="material-symbols-outlined text-indigo-400 align-middle text-lg">verified</span>
+        Période d'essai gratuite de 7 jours incluse. Toutes les fonctionnalités Premium activées pendant l'essai. Aucune carte bancaire demandée.
       </p>
-
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const billingCycle = ref('monthly')
-const selectedPlan = ref('pro')
-
 const plans = [
   {
-    key:          'base',
-    name:         'Starter',
-    tagline:      'Pour démarrer sans engagement.',
-    monthlyPrice: 9900,
-    annualPrice:  95040,
-    badge:        null,
+    key: 'basic',
+    name: 'Basic',
+    tagline: 'L\'essentiel pour démarrer.',
+    price: '15 000',
+    popular: false,
     features: [
-      'Accès QR code 24h/24',
-      'Abonnement mensuel renouvelable',
-      'Paiement sur place',
-      'Historique de présences',
+      'Accès QR code pour les membres',
+      'Gestion des abonnements (mensuel, annuel)',
+      'Dashboard des présences',
+      'Gestion des clients',
+      'Paiements par espèces et Mobile Money',
+      'Jusqu\'à 50 membres actifs',
+    ],
+    missing: [
       'Boutique en ligne',
     ],
-    cta: 'Commencer',
+    cta: 'Commencer l\'essai',
   },
   {
-    key:          'pro',
-    name:         'Pro',
-    tagline:      'Le choix de ceux qui progressent vraiment.',
-    monthlyPrice: 19900,
-    annualPrice:  191040,
-    badge:        'Le plus populaire',
+    key: 'premium',
+    name: 'Premium',
+    tagline: 'Le choix des salles qui cartonnent.',
+    price: '25 000',
+    popular: true,
     features: [
-      'Tout le plan Starter',
-      'Accès à tous les équipements',
-      'Livraison boutique à domicile',
-      'Suivi de commande en temps réel',
-      'Renouvellement automatique',
+      'Tout le plan Basic',
+      'Boutique en ligne dédiée',
+      'Catalogue produits illimité',
+      'Paiements FedaPay (carte + Mobile Money)',
+      'Suivi des commandes (livraison/retrait)',
+      'Membres et clients externes',
       'Support prioritaire',
     ],
-    cta: 'Rejoindre',
-  },
-  {
-    key:          'elite',
-    name:         'Elite',
-    tagline:      'Pour ceux qui ne font pas les choses à moitié.',
-    monthlyPrice: 34900,
-    annualPrice:  335040,
-    badge:        null,
-    features: [
-      'Tout le plan Pro',
-      'Accès VIP illimité',
-      'Coaching personnalisé (2×/mois)',
-      'Frais de livraison offerts',
-      'Accès espace récupération',
-      'Nutrition personnalisée',
-    ],
-    cta: 'Devenir Elite',
+    missing: [],
+    cta: 'Commencer l\'essai',
   },
 ]
 </script>

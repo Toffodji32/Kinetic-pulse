@@ -1,112 +1,79 @@
 <template>
-  <section id="shop" class="py-24 bg-gym-surface">
+  <section id="shop" class="py-24 bg-[#0a0a0f]">
     <div class="container mx-auto px-6">
 
-      <div class="flex justify-between items-end mb-16">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-widest text-gym-primary mb-3 block">
-            Boutique Kinetic
-          </span>
-          <h2 class="font-headline text-3xl font-bold text-gym-on-surface">
-            Commande. Paye. <span class="text-gym-primary">Reçois.</span>
-          </h2>
-          <p class="text-gym-on-surface-variant text-sm mt-2 max-w-md">
-            Suppléments, équipements et vêtements de sport livrés chez toi ou à retirer en salle.
-          </p>
-        </div>
-        <router-link
-          to="/shop"
-          class="text-gym-primary font-bold flex items-center gap-2 hover:underline text-sm"
-        >
-          Voir tout le catalogue
-          <span class="material-symbols-outlined text-sm">arrow_forward</span>
-        </router-link>
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-purple-400 mb-3 block">
+          Boutique en ligne
+        </span>
+        <h2 class="font-headline text-4xl font-bold mb-4 text-white">
+          Vendez en ligne.<br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Depuis votre salle.</span>
+        </h2>
+        <p class="text-zinc-400">Chaque salle de sport obtient sa propre boutique en ligne. Vendez des suppléments, équipements, vêtements et accessoires à vos membres et au grand public.</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div
-          v-for="product in products"
-          :key="product.name"
-          class="group cursor-pointer"
-          @click="router.push('/shop')"
-        >
-          <div class="relative aspect-square rounded-3xl overflow-hidden bg-gym-surface-low mb-4 border border-gym-outline-variant/10 group-hover:border-gym-primary/30 transition-all">
-            <img
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              :src="product.image"
-              :alt="product.name"
-            />
-            <!-- Overlay panier -->
-            <div class="absolute inset-0 bg-gym-surface/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div class="bg-gym-primary text-gym-on-primary px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
-                Commander
-              </div>
-            </div>
-            <!-- Badge catégorie -->
-            <div class="absolute top-3 left-3 bg-gym-surface/80 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-bold text-gym-primary">
-              {{ product.category }}
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div v-for="item in shopFeatures" :key="item.title"
+          class="bg-white/[0.03] border border-white/[0.06] rounded-3xl p-8 text-center">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" :class="item.bg">
+            <span class="material-symbols-outlined text-3xl" :class="item.color">{{ item.icon }}</span>
           </div>
-          <h4 class="font-bold text-gym-on-surface">{{ product.name }}</h4>
-          <div class="flex justify-between items-center mt-1">
-            <p class="text-gym-primary font-black">{{ product.price }} FCFA</p>
-            <span class="text-xs text-gym-on-surface-variant">{{ product.stock }}</span>
+          <h3 class="font-bold text-white mb-2">{{ item.title }}</h3>
+          <p class="text-zinc-400 text-sm">{{ item.desc }}</p>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-500/20 rounded-[2rem] p-10 md:p-16 text-center">
+        <h3 class="font-headline text-3xl font-bold text-white mb-4">
+          Votre boutique, votre URL
+        </h3>
+        <p class="text-zinc-400 max-w-xl mx-auto mb-8">
+          Chaque salle reçoit une boutique accessible via <span class="text-indigo-400 font-semibold">/shop/votre-salle</span>. 
+          Ajoutez des produits, fixez vos prix, et laissez vos clients commander en ligne — livraison ou retrait en salle.
+        </p>
+        <div class="inline-flex items-center gap-3 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-zinc-400 font-mono text-sm">
+          <span class="text-indigo-400">kinetic-pulse.vercel.app</span><span class="text-purple-400">/shop/</span><span class="text-white">ma-salle</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 mt-10">
+          <div class="flex items-center gap-2 text-sm text-zinc-400">
+            <span class="material-symbols-outlined text-indigo-400 text-lg">shopping_cart</span>
+            Panier en ligne
+          </div>
+          <div class="flex items-center gap-2 text-sm text-zinc-400">
+            <span class="material-symbols-outlined text-purple-400 text-lg">payments</span>
+            FedaPay sécurisé
+          </div>
+          <div class="flex items-center gap-2 text-sm text-zinc-400">
+            <span class="material-symbols-outlined text-indigo-400 text-lg">local_shipping</span>
+            Livraison ou retrait
+          </div>
+          <div class="flex items-center gap-2 text-sm text-zinc-400">
+            <span class="material-symbols-outlined text-purple-400 text-lg">receipt_long</span>
+            Suivi des commandes
           </div>
         </div>
       </div>
-
-      <!-- CTA boutique -->
-      <div class="text-center mt-16">
-        <div class="inline-flex flex-col items-center gap-4">
-          <p class="text-gym-on-surface-variant text-sm">
-            Livraison à domicile · Retrait en salle · Paiement FedaPay sécurisé
-          </p>
-          <router-link to="/shop">
-            <button class="px-10 py-4 bg-gradient-to-r from-gym-primary to-gym-primary-container text-gym-on-primary font-black rounded-full text-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gym-primary/20">
-              Explorer la boutique →
-            </button>
-          </router-link>
-        </div>
-      </div>
-
     </div>
   </section>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const products = [
+const shopFeatures = [
   {
-    name:     'Whey Protéine Premium',
-    price:    '15 000',
-    category: 'Suppléments',
-    stock:    'En stock',
-    image:    'https://lh3.googleusercontent.com/aida-public/AB6AXuCcPUqupQPv2jQo11teMYjwQvbWPwwmzSNZ3H_KflKikruTfO50mws1F0_RFMyYGL3c0bYBBqc_6BaF6AUuLOXETd--ADJV2XfZeob5qtAt_BGFeJrz8MNxmvXHqqcNn_O5H2iyDM7zvd9a15F8DqfH4AHzK27gxz_6hVLG1T4VyfzUHo9C8m8uYwv5wYZQKkSiqphRCS2R6ddQGFN2POhyGXapTNBY8lJQ5GctX82jrW99TJbtwPuNQO6TSMsvqEQgrjjx-n4y3EE',
+    icon: 'inventory_2', bg: 'bg-indigo-500/10', color: 'text-indigo-400',
+    title: 'Catalogue illimité',
+    desc: 'Ajoutez autant de produits que vous voulez. Suppléments, équipements, vêtements, accessoires — gérez votre stock en temps réel.',
   },
   {
-    name:     'Écouteurs Sport Pulse',
-    price:    '28 000',
-    category: 'Accessoires',
-    stock:    'En stock',
-    image:    'https://lh3.googleusercontent.com/aida-public/AB6AXuDiyFh3f--Oj4bWTVL8V0cxS-I5glIHXsrJEhlVWkp0FwWcaNyCg-Wa13UlGPT4grtB6eULEe0v9-sRtdVGz6uwSM2qRFpPwplRqT_0Msohb1419xu57iatZPQRL_UCXwJKtlc1W5V3_0qKMG_66LYE59XflCABtYrihTcAvlx08A4-EwZ2ymjcytZgn8SQeLyKFq1Td4M-zVgR0HeV9lJwwwdYFzVIEKks7WRwpMsq40oIQRg8Hn9kaIrWyhqIX8qQObLuGc_OPz8',
+    icon: 'payments', bg: 'bg-emerald-500/10', color: 'text-emerald-400',
+    title: 'Paiement FedaPay',
+    desc: 'Carte bancaire et Mobile Money. Les fonds sont sécurisés et le suivi des transactions est automatique.',
   },
   {
-    name:     'T-shirt Tech-Flex Pro',
-    price:    '8 500',
-    category: 'Vêtements',
-    stock:    'En stock',
-    image:    'https://lh3.googleusercontent.com/aida-public/AB6AXuCjFT3FwEiPK3thteUy5DIdVN228WMt6fSw18HhD9RNrE5iUfQ5tBCJm-yyoFZ1Emdv7T2Ioj_82vLvqg_3OAq4KP7u6ZA1AgXTtx-CddjnpyxceseDosJbIbgChNcDUx4aWQ82knDcIt9TswgjAyNtKrzTHxKjSRwyjT6hxKA-fQiQ54VzobejurNaCM2r7c89bnkMk_TbBO7WGQfUT9B75D-bqVlSACLMt4PXXCfKtH9kFCjE3y6Im9DkbfrZ9UZ1pOpYSJ6GFP0',
-  },
-  {
-    name:     'Bandes de Résistance Elite',
-    price:    '4 200',
-    category: 'Équipements',
-    stock:    'Presque épuisé',
-    image:    'https://lh3.googleusercontent.com/aida-public/AB6AXuCt-uY2sWZR_Rk0zroy630MnwHKeX0f2nal3JiR0YFXKmFPXp7np4b8SddBwkZ7vf0vnidIl0ICckXHrhOV5juR8BoZgWQoqyMR9nXIfT2eR_alSfexI8TJR5wZCs4-sIqqvqx-BarMYPyKGOIawYovqya-dimPs6SoE9PkqcqP2y14fCQgts93Xl1-Alv0TdDCJPCChCr2S0bseAhEXZcHoxTFzEeMJliDGiLwIAHUi67pDXNoAjVr_VFKcYhmC40jsJJlc-K03nA',
+    icon: 'groups', bg: 'bg-purple-500/10', color: 'text-purple-400',
+    title: 'Membres + Externes',
+    desc: 'Vos membres abonnés peuvent commander, mais aussi les clients externes. Élargissez votre clientèle au-delà de la salle.',
   },
 ]
 </script>
