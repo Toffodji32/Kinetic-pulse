@@ -9,7 +9,7 @@
                 <ShoppingCart />
             </el-icon>
             <p class="text-gray-400 font-medium text-lg mb-6">Votre panier est vide</p>
-            <router-link to="/shop">
+            <router-link :to="gymShopPath()">
                 <el-button type="primary" size="large"
                     style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px;">
                     Continuer mes achats
@@ -99,14 +99,14 @@
                     </div>
 
                     <!-- Checkout -->
-                    <router-link to="/shop/checkout">
+                    <router-link :to="gymShopPath('/checkout')">
                         <el-button type="primary" size="large" class="w-full"
                             style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;">
                             Commander →
                         </el-button>
                     </router-link>
 
-                    <router-link to="/shop"
+                    <router-link :to="gymShopPath()"
                         class="block text-center mt-4 text-indigo-600 text-sm font-medium hover:underline">
                         ← Continuer mes achats
                     </router-link>
@@ -118,12 +118,21 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { mediaUrl } from '@/utils/media'
 import Swal from 'sweetalert2'
 import {
     ShoppingCart, ShoppingBag, Plus, Minus, Delete
 } from '@element-plus/icons-vue'
+
+const route = useRoute()
+const gymSlug = computed(() => route.params.gymSlug || '')
+
+function gymShopPath(suffix = '') {
+    return gymSlug.value ? `/shop/${gymSlug.value}${suffix}` : `/shop${suffix}`
+}
 
 const cartStore = useCartStore()
 
@@ -144,7 +153,7 @@ async function confirmClear() {
 
 function formatCurrency(value) {
     return new Intl.NumberFormat('fr-FR', {
-        style: 'currency', currency: 'EUR'
+        style: 'currency', currency: 'XOF', maximumFractionDigits: 0
     }).format(value ?? 0)
 }
 </script>

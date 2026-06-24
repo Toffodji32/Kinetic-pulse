@@ -176,9 +176,8 @@ router.beforeEach((to, from) => {
       const loginName = to.params.gymSlug ? 'gym-shop-login' : 'shop-login'
       return { name: loginName, query: { redirect: to.fullPath } }
     }
-    if ((isAdmin || isReceptionist) && !isClient) {
-      return { name: 'dashboard' }
-    }
+    // Admins et réceptionnistes peuvent aussi voir la boutique
+    if (isAdmin || isReceptionist) return true
     return true
   }
 

@@ -16,7 +16,7 @@
                 <Box />
             </el-icon>
             <p class="text-gray-400 font-medium text-lg mb-6">Vous n'avez pas encore de commande</p>
-            <router-link to="/shop">
+            <router-link :to="gymSlug ? `/shop/${gymSlug}` : '/shop'">
                 <el-button type="primary" size="large"
                     style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px;">
                     Découvrir la boutique
