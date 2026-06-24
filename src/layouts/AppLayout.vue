@@ -213,7 +213,18 @@ const handleLogout = () => {
     router.push('/login')
 }
 
-onMounted(() => {
+import api from '@/plugins/axios'
+
+onMounted(async () => {
+    if (gymAuthStore.token || authStore.token) {
+        try {
+            const { data } = await api.get('/gym/profile')
+            if (!gymAuthStore.gym) {
+                gymAuthStore.gym = data
+                localStorage.setItem('gym_gym', JSON.stringify(data))
+            }
+        } catch {}
+    }
     if (gymAuthStore.token) {
         gymAuthStore.fetchSubscription().catch(() => {})
     }
