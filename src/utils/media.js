@@ -18,7 +18,7 @@ function resolveMediaBaseUrl() {
 export function mediaUrl(path) {
   if (!path) return ''
 
-  if (path.startsWith('http://') || path.startsWith('https://')) {
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
     if (typeof window !== 'undefined' && window.location.protocol === 'https:' && path.startsWith('http://')) {
       return `https://${path.slice('http://'.length)}`
     }
