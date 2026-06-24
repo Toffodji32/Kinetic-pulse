@@ -104,7 +104,8 @@ const handleLogin = async () => {
 
     try {
         await authStore.login(email.value, password.value)
-        const redirect = route.query.redirect || '/admin/dashboard'
+        const isSuperAdmin = authStore.user?.roles?.includes('ROLE_SUPER_ADMIN')
+        const redirect = route.query.redirect || (isSuperAdmin ? '/super-admin/dashboard' : '/admin/dashboard')
         router.replace(redirect)
     } catch (err) {
         errorMessage.value = authStore.error || 'Email ou mot de passe incorrect'
