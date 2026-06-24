@@ -40,14 +40,6 @@
                     <span class="text-sm font-medium">Abonnements</span>
                 </router-link>
 
-                <hr class="my-2 border-white/5">
-
-                <router-link to="/admin/dashboard"
-                    class="flex items-center gap-3 px-4 py-2 text-gray-500 hover:bg-white/5 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                    <span class="text-sm font-medium">Retour Admin</span>
-                </router-link>
             </nav>
 
             <div class="mt-auto pt-6 border-t border-white/5">

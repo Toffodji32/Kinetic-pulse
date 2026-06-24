@@ -217,6 +217,10 @@ router.beforeEach((to, from) => {
     if (!isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } }
     }
+    // Super admin redirigé vers son espace dédié
+    if (userRoles.includes('ROLE_SUPER_ADMIN')) {
+      return { name: 'super-admin-dashboard' }
+    }
     if (!isAdmin) {
       if (isClient) return { name: 'shop-home' }
       return { name: 'login' }
