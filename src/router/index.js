@@ -1,4 +1,5 @@
 import AppLayout from '@/layouts/AppLayout.vue'
+import SuperAdminLayout from '@/layouts/SuperAdminLayout.vue'
 import ShopLayout from '@/layouts/ShopLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import Categories from '@/views/Dashboard/Categories.vue'
@@ -21,6 +22,10 @@ import ShopCheckout from '@/views/Shop/ShopCheckout.vue'
 import ShopHome from '@/views/Shop/ShopHome.vue'
 import ShopLogin from '@/views/Shop/ShopLogin.vue'
 import ShopOrders from '@/views/Shop/ShopOrders.vue'
+import SuperAdminDashboard from '@/views/SuperAdmin/SuperAdminDashboard.vue'
+import SuperAdminGyms from '@/views/SuperAdmin/SuperAdminGyms.vue'
+import SuperAdminGymDetail from '@/views/SuperAdmin/SuperAdminGymDetail.vue'
+import SuperAdminSubscriptions from '@/views/SuperAdmin/SuperAdminSubscriptions.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -70,6 +75,20 @@ const router = createRouter({
         { path: 'categories',    name: 'admin-categories',    component: Categories    },
         { path: 'gym/subscription', name: 'admin-gym-subscription', component: GymSubscriptionPage },
         { path: 'settings',      name: 'admin-settings',      component: Settings      },
+      ],
+    },
+
+    // ── Super Admin ──────────────────────────────
+    {
+      path: '/super-admin',
+      component: SuperAdminLayout,
+      meta: { requiresAuth: true, requiresSuperAdmin: true },
+      children: [
+        { path: '', redirect: { name: 'super-admin-dashboard' } },
+        { path: 'dashboard',     name: 'super-admin-dashboard',   component: SuperAdminDashboard },
+        { path: 'gyms',          name: 'super-admin-gyms',        component: SuperAdminGyms },
+        { path: 'gyms/:id',      name: 'super-admin-gym-detail',  component: SuperAdminGymDetail },
+        { path: 'subscriptions', name: 'super-admin-subscriptions', component: SuperAdminSubscriptions },
       ],
     },
 
@@ -181,7 +200,19 @@ router.beforeEach((to, from) => {
     return true
   }
 
-  // ── 3. Routes admin → ROLE_ADMIN obligatoire ──
+  // ── 3. Routes super admin → ROLE_SUPER_ADMIN obligatoire ──
+  if (to.meta.requiresSuperAdmin) {
+    if (!isAuthenticated) {
+      return { name: 'login', query: { redirect: to.fullPath } }
+    }
+    if (!userRoles.includes('ROLE_SUPER_ADMIN')) {
+      if (isAdmin) return { name: 'dashboard' }
+      return { name: 'login' }
+    }
+    return true
+  }
+
+  // ── 4. Routes admin → ROLE_ADMIN obligatoire ──
   if (to.meta.requiresAdmin) {
     if (!isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } }
@@ -193,7 +224,7 @@ router.beforeEach((to, from) => {
     return true
   }
 
-  // ── 4. Routes auth générales ──────────────────
+  // ── 5. Routes auth générales ──────────────────
   if (to.meta.requiresAuth) {
     if (!isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } }
@@ -204,8 +235,9 @@ router.beforeEach((to, from) => {
     return true
   }
 
-  // ── 5. Déjà connecté → rediriger ──
+  // ── 6. Déjà connecté → rediriger ──
   if (to.name === 'login' && isAuthenticated) {
+    if (userRoles.includes('ROLE_SUPER_ADMIN')) return { name: 'super-admin-dashboard' }
     if (isAdmin || isReceptionist) return { name: 'dashboard' }
     if (isClient)                  return { name: 'shop-home' }
   }
