@@ -103,7 +103,9 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-sm font-semibold text-slate-800 truncate">{{ gymAuthStore.gym?.name || 'Ma salle' }}</p>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400">Gérer la salle</p>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400">
+                            shop/{{ gymAuthStore.gym?.slug || '...' }}
+                        </p>
                     </div>
                 </router-link>
 

@@ -53,14 +53,24 @@
                             <el-form-item label="Nom de la salle">
                                 <el-input v-model="form.name" placeholder="Nom de votre salle" />
                             </el-form-item>
-                            <el-form-item label="Email de contact">
-                                <el-input v-model="form.email" placeholder="contact@masalle.com" />
+                            <el-form-item label="Slug (URL boutique)">
+                                <el-input v-model="form.slug" placeholder="ma-salle">
+                                    <template #append>
+                                        <span class="text-xs text-gray-400">/shop/{{ form.slug || 'slug' }}</span>
+                                    </template>
+                                </el-input>
+                                <p class="text-xs text-gray-400 mt-1">Utilisé dans l'URL de votre boutique</p>
                             </el-form-item>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <el-form-item label="Email de contact">
+                                <el-input v-model="form.email" placeholder="contact@masalle.com" />
+                            </el-form-item>
                             <el-form-item label="Téléphone">
                                 <el-input v-model="form.phone" placeholder="+229 01 23 45 67" />
                             </el-form-item>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <el-form-item label="Adresse">
                                 <el-input v-model="form.address" placeholder="Cotonou, Bénin" />
                             </el-form-item>
@@ -96,6 +106,7 @@ const saving = ref(false)
 
 const gym = reactive({
     name: '',
+    slug: '',
     email: '',
     phone: '',
     address: '',
@@ -105,6 +116,7 @@ const gym = reactive({
 
 const form = reactive({
     name: '',
+    slug: '',
     email: '',
     phone: '',
     address: '',
@@ -148,6 +160,7 @@ const saveGym = async () => {
     try {
         const { data } = await gymHttp.put('/gym/profile', {
             name: form.name,
+            slug: form.slug,
             email: form.email,
             phone: form.phone,
             address: form.address,
