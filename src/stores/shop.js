@@ -1,6 +1,10 @@
 import api from '@/plugins/axios'
 import { defineStore } from 'pinia'
 
+function shopPrefix(gymSlug) {
+  return gymSlug ? `/shop/${gymSlug}` : '/shop'
+}
+
 export const useShopStore = defineStore('shop', {
   state: () => ({
     products: [],
@@ -10,12 +14,11 @@ export const useShopStore = defineStore('shop', {
   }),
 
   actions: {
-    // catalogue public
-    async fetchProducts() {
+    async fetchProducts(gymSlug) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.get('/shop/products')
+        const { data } = await api.get(`${shopPrefix(gymSlug)}/products`)
         this.products = data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur chargement produits'
@@ -24,12 +27,11 @@ export const useShopStore = defineStore('shop', {
       }
     },
 
-    // inscription client
-    async register(name, email, phone, password) {
+    async register(name, email, phone, password, gymSlug) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.post('/shop/register', { name, email, phone, password })
+        const { data } = await api.post(`${shopPrefix(gymSlug)}/register`, { name, email, phone, password })
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur inscription'
@@ -39,12 +41,11 @@ export const useShopStore = defineStore('shop', {
       }
     },
 
-    // passer une commande
-    async createOrder(payload) {
+    async createOrder(payload, gymSlug) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.post('/shop/orders', payload)
+        const { data } = await api.post(`${shopPrefix(gymSlug)}/orders`, payload)
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur commande'
@@ -54,11 +55,10 @@ export const useShopStore = defineStore('shop', {
       }
     },
 
-    // mes commandes
-    async fetchMyOrders() {
+    async fetchMyOrders(gymSlug) {
       this.loading = true
       try {
-        const { data } = await api.get('/shop/orders')
+        const { data } = await api.get(`${shopPrefix(gymSlug)}/orders`)
         this.orders = data
       } finally {
         this.loading = false

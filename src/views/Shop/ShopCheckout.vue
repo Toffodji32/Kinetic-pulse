@@ -153,14 +153,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useShopStore } from '@/stores/shop'
 import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 import { Location, Van } from '@element-plus/icons-vue'
 
+const route = useRoute()
 const router = useRouter()
+const gymSlug = computed(() => route.params.gymSlug || '')
 const cartStore = useCartStore()
 const shopStore = useShopStore()
 const authStore = useAuthStore()
@@ -274,9 +276,8 @@ function launchFedaPay() {
                         ? form.value.delivery_address
                         : null,
                     delivery_fee: form.value.delivery_type === 'livraison' ? DELIVERY_FEE : 0,
-                    // on passe l'ID transaction FedaPay pour la traçabilité
                     fedapay_transaction_id: transaction.id,
-                })
+                }, gymSlug.value)
 
                 // vider le panier
                 cartStore.clear()
@@ -299,7 +300,7 @@ function launchFedaPay() {
                     confirmButtonText: 'Voir mes commandes',
                 })
 
-                router.push('/shop/orders')
+                router.push(gymSlug.value ? `/shop/${gymSlug.value}/orders` : '/shop/orders')
 
             } catch {
                 Swal.fire({

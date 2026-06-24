@@ -72,11 +72,12 @@ export const useGymAuthStore = defineStore('gymAuth', {
       }
     },
 
-    async paySubscription(fedapayTransactionId) {
+    async paySubscription(fedapayTransactionId, planType) {
       this.loading = true
       try {
         const { data } = await gymHttp.post('/gym/subscription/pay', {
           fedapayTransactionId,
+          plan_type: planType || 'basic',
         })
         this.subscription = data
         return data

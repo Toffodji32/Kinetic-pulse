@@ -118,11 +118,12 @@
 import { useAuthStore } from '@/stores/auth'
 import { useShopStore } from '@/stores/shop'
 import { Lock, Message, Phone, User } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
+const gymSlug = computed(() => route.params.gymSlug || '')
 const authStore = useAuthStore()
 const shopStore = useShopStore()
 
@@ -184,11 +185,11 @@ async function handleLogin() {
                 return
             }
 
-            // client → redirect ou shop-home
             const redirect = route.query.redirect
+            const defaultShop = gymSlug.value ? `/shop/${gymSlug.value}` : '/shop'
             const safeRedirect = redirect && redirect !== '/shop/login' && redirect !== '/login'
                 ? redirect
-                : '/shop'
+                : defaultShop
 
             router.push(safeRedirect)
 
@@ -210,17 +211,16 @@ async function handleRegister() {
                 registerForm.value.name,
                 registerForm.value.email,
                 registerForm.value.phone,
-                registerForm.value.password
+                registerForm.value.password,
+                gymSlug.value
             )
 
-            // auto-login après inscription
             authStore.token = result.token
             authStore.user = result.user
             localStorage.setItem('token', result.token)
             localStorage.setItem('user', JSON.stringify(result.user))
 
-            // ← toujours vers shop-home après inscription
-            router.push({ name: 'shop-home' })
+            router.push(gymSlug.value ? `/shop/${gymSlug.value}` : { name: 'shop-home' })
 
         } catch {
             error.value = shopStore.error || 'Erreur lors de la création du compte'

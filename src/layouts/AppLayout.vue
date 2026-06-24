@@ -79,6 +79,13 @@
                     <span class="material-symbols-outlined">workspace_premium</span>
                     <span class="text-sm font-medium">Abonnement</span>
                 </router-link>
+
+                <router-link v-if="hasShopFeature" :to="`/shop/${gymAuthStore.gym?.slug}`" target="_blank"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
+                    :class="route.path === '/shop' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    <span class="material-symbols-outlined">storefront</span>
+                    <span class="text-sm font-medium">Boutique</span>
+                </router-link>
             </nav>
 
             <!-- Footer Sidebar -->
@@ -163,6 +170,12 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const gymAuthStore = useGymAuthStore()
+
+const hasShopFeature = computed(() => {
+    const s = gymAuthStore.subscription
+    if (!s) return false
+    return s.status === 'trial' || (s.status === 'active' && s.planType === 'premium')
+})
 
 const subscriptionBanner = computed(() => {
     const s = gymAuthStore.subscription

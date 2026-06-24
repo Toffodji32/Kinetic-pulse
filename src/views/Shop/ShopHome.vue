@@ -238,7 +238,7 @@
                 class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3 z-50">
                 <el-icon class="text-green-400"><CircleCheck /></el-icon>
                 <span class="font-medium">{{ toastMessage }}</span>
-                <router-link to="/shop/cart" class="text-indigo-400 font-bold hover:text-indigo-300">
+                <router-link :to="gymSlug ? `/shop/${gymSlug}/cart` : '/shop/cart'" class="text-indigo-400 font-bold hover:text-indigo-300">
                     Voir le panier →
                 </router-link>
             </div>
@@ -263,6 +263,10 @@ import {
     View,
 } from '@element-plus/icons-vue'
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const gymSlug = computed(() => route.params.gymSlug || '')
 
 const shopStore     = useShopStore()
 const cartStore     = useCartStore()
@@ -279,9 +283,20 @@ const selectedProduct = ref(null)
 const modalQty        = ref(1)
 
 // ── Chargement ────────────────────────────────────────────────────────────
+async function loadCategories() {
+    if (gymSlug.value) {
+        try {
+            const { data } = await (await import('@/plugins/axios')).default.get(`/shop/${gymSlug.value}/categories`)
+            categoryStore.categories = data
+        } catch {}
+    } else {
+        await categoryStore.fetchAll()
+    }
+}
+
 onMounted(async () => {
-    await categoryStore.fetchAll()
-    await shopStore.fetchProducts()
+    await loadCategories()
+    await shopStore.fetchProducts(gymSlug.value)
 })
 
 // ── Filtres ───────────────────────────────────────────────────────────────

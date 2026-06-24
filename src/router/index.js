@@ -73,7 +73,7 @@ const router = createRouter({
       ],
     },
 
-    // ── Boutique client ────────────────────────
+    // ── Boutique client (globale) ──────────────
     {
       path: '/shop',
       component: ShopLayout,
@@ -106,7 +106,45 @@ const router = createRouter({
           path: 'login',
           name: 'shop-login',
           component: ShopLogin,
-          meta: { public: true }, // ← toujours public !
+          meta: { public: true },
+        },
+      ],
+    },
+
+    // ── Boutique par salle de gym ──────────────
+    {
+      path: '/shop/:gymSlug',
+      component: ShopLayout,
+      children: [
+        {
+          path: '',
+          name: 'gym-shop-home',
+          component: ShopHome,
+          meta: { public: true },
+        },
+        {
+          path: 'cart',
+          name: 'gym-shop-cart',
+          component: ShopCart,
+          meta: { public: true },
+        },
+        {
+          path: 'checkout',
+          name: 'gym-shop-checkout',
+          component: ShopCheckout,
+          meta: { requiresClient: true },
+        },
+        {
+          path: 'orders',
+          name: 'gym-shop-orders',
+          component: ShopOrders,
+          meta: { requiresClient: true },
+        },
+        {
+          path: 'login',
+          name: 'gym-shop-login',
+          component: ShopLogin,
+          meta: { public: true },
         },
       ],
     },
@@ -135,7 +173,8 @@ router.beforeEach((to, from) => {
   // ── 2. Routes boutique client ─────────────────
   if (to.meta.requiresClient) {
     if (!isAuthenticated) {
-      return { name: 'shop-login', query: { redirect: to.fullPath } }
+      const loginName = to.params.gymSlug ? 'gym-shop-login' : 'shop-login'
+      return { name: loginName, query: { redirect: to.fullPath } }
     }
     if ((isAdmin || isReceptionist) && !isClient) {
       return { name: 'dashboard' }
@@ -166,11 +205,13 @@ router.beforeEach((to, from) => {
     return true
   }
 
-  // ── 5. Déjà connecté sur /login → rediriger ──
-  // NE gérer que /login — pas shop-login car c'est public
+  // ── 5. Déjà connecté → rediriger ──
   if (to.name === 'login' && isAuthenticated) {
     if (isAdmin || isReceptionist) return { name: 'dashboard' }
     if (isClient)                  return { name: 'shop-home' }
+  }
+  if (to.name === 'shop-login' && isAuthenticated) {
+    if (isClient) return { name: 'shop-home' }
   }
 
   return true

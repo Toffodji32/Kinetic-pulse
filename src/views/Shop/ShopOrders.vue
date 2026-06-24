@@ -196,7 +196,8 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { mediaUrl } from '@/utils/media'
 import { useShopStore } from '@/stores/shop'
 import {
@@ -205,9 +206,9 @@ import {
     Promotion, SetUp, Van, House,
 } from '@element-plus/icons-vue'
 
+const route = useRoute()
+const gymSlug = computed(() => route.params.gymSlug || '')
 const shopStore = useShopStore()
-
-onMounted(() => shopStore.fetchMyOrders())
 
 // ── Étapes de livraison avec icônes ──────────────
 const deliverySteps = [
@@ -217,11 +218,13 @@ const deliverySteps = [
     { value: 'delivered', label: 'Livrée', icon: House },
 ]
 
-// Dans ShopOrders.vue — rafraîchissement automatique
+function loadOrders() {
+    shopStore.fetchMyOrders(gymSlug.value)
+}
+
 onMounted(() => {
-    shopStore.fetchMyOrders()
-    // recharge toutes les 30 secondes
-    const interval = setInterval(() => shopStore.fetchMyOrders(), 30000)
+    loadOrders()
+    const interval = setInterval(loadOrders, 30000)
     onUnmounted(() => clearInterval(interval))
 })
 
