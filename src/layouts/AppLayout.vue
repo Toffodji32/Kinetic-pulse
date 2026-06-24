@@ -1,72 +1,90 @@
 <template>
     <div class="flex bg-[#faf8ff] min-h-screen">
+        <!-- Mobile overlay -->
+        <div v-if="sidebarOpen" class="fixed inset-0 bg-black/40 z-40 lg:hidden" @click="sidebarOpen = false"></div>
+
         <!-- SIDEBAR -->
-        <aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-[#f2f3ff] flex flex-col gap-2 p-6 z-50">
-            <div class="mb-8">
-                <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Ledger</h1>
-                <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Premium Fitness Admin
-                </p>
+        <aside
+            class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-[#f2f3ff] flex flex-col gap-2 p-6 z-50 transition-transform duration-300 lg:translate-x-0"
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Ledger</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Premium Fitness Admin</p>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:text-slate-800">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
             </div>
 
             <nav class="flex flex-col gap-1 flex-1">
                 <router-link to="/admin/dashboard"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/dashboard' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/dashboard' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span class="text-sm font-medium">Dashboard</span>
                 </router-link>
 
                 <router-link to="/admin/clients"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/clients' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/clients' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">group</span>
                     <span class="text-sm font-medium">Clients</span>
                 </router-link>
 
                 <router-link to="/admin/subscriptions"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/subscriptions' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/subscriptions' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">card_membership</span>
                     <span class="text-sm font-medium">Subscriptions</span>
                 </router-link>
 
                 <router-link to="/admin/payments"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/payments' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/payments' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">payments</span>
                     <span class="text-sm font-medium">Payments</span>
                 </router-link>
 
                 <router-link to="/admin/orders"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/orders' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/orders' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">shopping_bag</span>
                     <span class="text-sm font-medium">Orders</span>
                 </router-link>
 
                 <router-link to="/admin/products"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/products' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/products' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">inventory_2</span>
                     <span class="text-sm font-medium">Products</span>
                 </router-link>
 
                 <router-link to="/admin/users"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/users' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/users' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">manage_accounts</span>
                     <span class="text-sm font-medium">Users</span>
                 </router-link>
 
                 <router-link to="/admin/categories"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/categories' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/categories' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">category</span>
                     <span class="text-sm font-medium">Catégories</span>
                 </router-link>
 
                 <router-link to="/admin/settings"
-                    class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200">
+                    class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">settings</span>
                     <span class="text-sm font-medium">Settings</span>
                 </router-link>
@@ -75,26 +93,26 @@
 
                 <router-link to="/admin/gym/subscription"
                     class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/gym/subscription' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/admin/gym/subscription' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">workspace_premium</span>
                     <span class="text-sm font-medium">Abonnement</span>
                 </router-link>
 
                 <router-link v-if="hasShopFeature && gymAuthStore.gym?.slug" :to="`/shop/${gymAuthStore.gym.slug}`" target="_blank"
                     class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/shop' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'">
+                    :class="route.path === '/shop' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">storefront</span>
                     <span class="text-sm font-medium">Boutique</span>
                 </router-link>
             </nav>
 
-            <!-- Footer Sidebar -->
             <div class="mt-auto pt-6 border-t border-slate-200/50 flex flex-col gap-1">
-
                 <router-link to="/admin/gym/info"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 text-slate-500 hover:bg-white/50 mb-2">
-                    <div v-if="gymAuthStore.gym?.logo"
-                        class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 text-slate-500 hover:bg-white/50 mb-2"
+                    @click="sidebarOpen = false">
+                    <div v-if="gymAuthStore.gym?.logo" class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
                         <img :src="gymAuthStore.gym.logo" class="w-full h-full object-cover" />
                     </div>
                     <div v-else
@@ -103,9 +121,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-sm font-semibold text-slate-800 truncate">{{ gymAuthStore.gym?.name || 'Ma salle' }}</p>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400">
-                            shop/{{ gymAuthStore.gym?.slug || '...' }}
-                        </p>
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400">Gérer la salle</p>
                     </div>
                 </router-link>
 
@@ -118,14 +134,16 @@
         </aside>
 
         <!-- MAIN CONTENT -->
-        <div class="ml-64 flex-1 min-h-screen bg-[#faf8ff] text-[#131b2e]">
+        <div class="flex-1 min-h-screen bg-[#faf8ff] text-[#131b2e] lg:ml-64">
             <!-- TOPBAR -->
-            <header
-                class="sticky top-0 z-40 w-full flex justify-between items-center h-20 px-8 bg-white/80 backdrop-blur-xl shadow-sm">
+            <header class="sticky top-0 z-30 w-full flex justify-between items-center h-20 px-4 lg:px-8 bg-white/80 backdrop-blur-xl shadow-sm">
+                <button @click="sidebarOpen = true" class="lg:hidden text-slate-600 hover:text-slate-900">
+                    <span class="material-symbols-outlined text-2xl">menu</span>
+                </button>
 
-                <div></div>
+                <div class="hidden lg:block"></div>
 
-                <router-link to="/admin/settings" class="flex items-center gap-3 pl-6 border-l border-slate-200 hover:opacity-80 transition-opacity">
+                <router-link to="/admin/settings" class="flex items-center gap-3 pl-6 border-l border-slate-200 hover:opacity-80 transition-opacity ml-auto">
                     <div class="text-right">
                         <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
                         <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté</p>
@@ -139,15 +157,13 @@
 
             <!-- TRIAL BANNER -->
             <div v-if="subscriptionBanner.show"
-                class="mx-8 mt-4 px-6 py-3 rounded-xl flex items-center justify-between gap-4"
-                :class="subscriptionBanner.class"
-                style="transition: all 0.3s ease;">
+                class="mx-4 lg:mx-8 mt-4 px-6 py-3 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                :class="subscriptionBanner.class">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-xl">{{ subscriptionBanner.icon }}</span>
                     <p class="text-sm font-medium">{{ subscriptionBanner.message }}</p>
                 </div>
-                <router-link v-if="subscriptionBanner.actionLink"
-                    :to="subscriptionBanner.actionLink"
+                <router-link v-if="subscriptionBanner.actionLink" :to="subscriptionBanner.actionLink"
                     class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
                     :class="subscriptionBanner.actionClass">
                     {{ subscriptionBanner.actionText }}
@@ -155,7 +171,7 @@
             </div>
 
             <!-- PAGE CONTENT -->
-            <main class="p-8 max-w-7xl mx-auto">
+            <main class="p-4 lg:p-8 max-w-7xl mx-auto">
                 <router-view />
             </main>
         </div>
@@ -163,15 +179,17 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useGymAuthStore } from '@/stores/gymAuth'
 import { useRoute, useRouter } from 'vue-router'
+import api from '@/plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const gymAuthStore = useGymAuthStore()
+const sidebarOpen = ref(false)
 
 const hasShopFeature = computed(() => {
     const s = gymAuthStore.subscription
@@ -214,8 +232,6 @@ const handleLogout = () => {
     authStore.logout()
     router.push('/login')
 }
-
-import api from '@/plugins/axios'
 
 onMounted(async () => {
     if (gymAuthStore.token || authStore.token) {
