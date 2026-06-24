@@ -96,7 +96,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useGymAuthStore } from '@/stores/gymAuth'
-import gymHttp from '@/plugins/gymHttp'
+import api from '@/plugins/axios'
 import { ElMessage } from 'element-plus'
 
 const gymAuthStore = useGymAuthStore()
@@ -140,7 +140,7 @@ const resetForm = () => {
 const loadGym = async () => {
     loading.value = true
     try {
-        const { data } = await gymHttp.get('/gym/profile')
+        const { data } = await api.get('/gym/profile')
         Object.assign(gym, data)
         Object.assign(form, data)
         localStorage.setItem('gym_gym', JSON.stringify(data))
@@ -158,7 +158,7 @@ const loadGym = async () => {
 const saveGym = async () => {
     saving.value = true
     try {
-        const { data } = await gymHttp.put('/gym/profile', {
+        const { data } = await api.put('/gym/profile', {
             name: form.name,
             slug: form.slug,
             email: form.email,
@@ -187,7 +187,7 @@ const handleLogoUpload = async (event) => {
 
     saving.value = true
     try {
-        const { data } = await gymHttp.post('/gym/logo', fd, {
+        const { data } = await api.post('/gym/logo', fd, {
             headers: { 'Content-Type': 'multipart/form-data' },
         })
         gym.logo = data.logo
