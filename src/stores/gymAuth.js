@@ -1,5 +1,6 @@
 import gymHttp from '@/plugins/gymHttp'
 import api from '@/plugins/axios'
+import { useAuthStore } from './auth'
 import { defineStore } from 'pinia'
 
 export const useGymAuthStore = defineStore('gymAuth', {
@@ -51,6 +52,12 @@ export const useGymAuthStore = defineStore('gymAuth', {
         localStorage.setItem('gym_token', data.token)
         localStorage.setItem('gym_user', JSON.stringify(data.user))
         localStorage.setItem('gym_gym', JSON.stringify(data.gym))
+
+        const authStore = useAuthStore()
+        authStore.token = data.token
+        authStore.user = data.user
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
 
         return data
       } catch (err) {
