@@ -1,4 +1,4 @@
-import api from '@/plugins/axios'
+import gymHttp from '@/plugins/gymHttp'
 import { defineStore } from 'pinia'
 
 function shopPrefix(gymSlug) {
@@ -18,7 +18,7 @@ export const useShopStore = defineStore('shop', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.get(`${shopPrefix(gymSlug)}/products`)
+        const { data } = await gymHttp.get(`${shopPrefix(gymSlug)}/products`)
         this.products = data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur chargement produits'
@@ -31,7 +31,7 @@ export const useShopStore = defineStore('shop', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.post(`${shopPrefix(gymSlug)}/register`, { name, email, phone, password })
+        const { data } = await gymHttp.post(`${shopPrefix(gymSlug)}/register`, { name, email, phone, password })
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur inscription'
@@ -45,7 +45,7 @@ export const useShopStore = defineStore('shop', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.post(`${shopPrefix(gymSlug)}/orders`, payload)
+        const { data } = await gymHttp.post(`${shopPrefix(gymSlug)}/orders`, payload)
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur commande'
@@ -58,7 +58,7 @@ export const useShopStore = defineStore('shop', {
     async fetchMyOrders(gymSlug) {
       this.loading = true
       try {
-        const { data } = await api.get(`${shopPrefix(gymSlug)}/orders`)
+        const { data } = await gymHttp.get(`${shopPrefix(gymSlug)}/orders`)
         this.orders = data
       } finally {
         this.loading = false

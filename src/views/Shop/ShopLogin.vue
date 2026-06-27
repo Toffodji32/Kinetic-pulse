@@ -175,15 +175,26 @@ async function handleLogin() {
         loading.value = true
         error.value = ''
         try {
-            await authStore.login(loginForm.value.email, loginForm.value.password)
+            const { data } = await api.post('/login', {
+                email: loginForm.value.email,
+                password: loginForm.value.password,
+            })
 
-            const roles = authStore.user?.roles || []
+            const roles = data.user?.roles || []
 
-            // admin ou réceptionniste qui se connecte via shop-login → dashboard
+            // admin ou receptionniste → authStore (token dans localStorage)
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_USER')) {
+                authStore.token = data.token
+                authStore.user = data.user
+                localStorage.setItem('token', data.token)
+                localStorage.setItem('user', JSON.stringify(data.user))
                 router.push({ name: 'dashboard' })
                 return
             }
+
+            // client → gym_token (ne touche pas au token admin)
+            localStorage.setItem('gym_token', data.token)
+            localStorage.setItem('gym_user', JSON.stringify(data.user))
 
             const redirect = route.query.redirect
             const defaultShop = gymSlug.value ? `/shop/${gymSlug.value}` : '/shop'
@@ -194,7 +205,7 @@ async function handleLogin() {
             router.push(safeRedirect)
 
         } catch {
-            error.value = authStore.error || 'Email ou mot de passe incorrect'
+            error.value = 'Email ou mot de passe incorrect'
         } finally {
             loading.value = false
         }
@@ -215,10 +226,9 @@ async function handleRegister() {
                 gymSlug.value
             )
 
-            authStore.token = result.token
-            authStore.user = result.user
-            localStorage.setItem('token', result.token)
-            localStorage.setItem('user', JSON.stringify(result.user))
+            // client → gym_token (ne touche pas au token admin)
+            localStorage.setItem('gym_token', result.token)
+            localStorage.setItem('gym_user', JSON.stringify(result.user))
 
             router.push(gymSlug.value ? `/shop/${gymSlug.value}` : { name: 'shop-home' })
 

@@ -53,11 +53,11 @@
                         <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-3">
                             <div
                                 class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
-                                {{ authStore.user?.name?.charAt(0) }}
+                                {{ currentUser?.name?.charAt(0) }}
                             </div>
                             <div>
-                                <p class="font-bold text-gray-800">{{ authStore.user?.name }}</p>
-                                <p class="text-sm text-gray-500">{{ authStore.user?.email }}</p>
+                                <p class="font-bold text-gray-800">{{ currentUser?.name }}</p>
+                                <p class="text-sm text-gray-500">{{ currentUser?.email }}</p>
                             </div>
                         </div>
                     </div>
@@ -157,6 +157,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useShopStore } from '@/stores/shop'
 import { useAuthStore } from '@/stores/auth'
+import { useGymAuthStore } from '@/stores/gymAuth'
 import Swal from 'sweetalert2'
 import { Location, Van } from '@element-plus/icons-vue'
 
@@ -166,6 +167,9 @@ const gymSlug = computed(() => route.params.gymSlug || '')
 const cartStore = useCartStore()
 const shopStore = useShopStore()
 const authStore = useAuthStore()
+const gymAuthStore = useGymAuthStore()
+
+const currentUser = computed(() => authStore.user || gymAuthStore.user)
 
 // ── Frais de livraison en FCFA ────────────────────
 const DELIVERY_FEE = 1500
@@ -226,10 +230,9 @@ async function handleOrder() {
 function launchFedaPay() {
     loading.value = true
 
-    const user = authStore.user
-    const totalAmount = Math.round(orderTotal.value) // FedaPay veut un entier
+    const user = currentUser.value
+    const totalAmount = Math.round(orderTotal.value)
 
-    // décomposer le nom en prénom / nom
     const nameParts = (user?.name || 'Client').split(' ')
     const firstname = nameParts[0] || 'Client'
     const lastname = nameParts.slice(1).join(' ') || ''

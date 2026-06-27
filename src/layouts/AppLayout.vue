@@ -9,8 +9,8 @@
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Ledger</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Premium Fitness Admin</p>
+                    <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Pulse</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Administration</p>
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:text-slate-800">
                     <span class="material-symbols-outlined">close</span>
@@ -23,7 +23,7 @@
                     :class="route.path === '/admin/dashboard' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">dashboard</span>
-                    <span class="text-sm font-medium">Dashboard</span>
+                    <span class="text-sm font-medium">Tableau de bord</span>
                 </router-link>
 
                 <router-link to="/admin/clients"
@@ -39,7 +39,7 @@
                     :class="route.path === '/admin/subscriptions' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">card_membership</span>
-                    <span class="text-sm font-medium">Subscriptions</span>
+                    <span class="text-sm font-medium">Abonnements</span>
                 </router-link>
 
                 <router-link to="/admin/payments"
@@ -47,7 +47,7 @@
                     :class="route.path === '/admin/payments' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">payments</span>
-                    <span class="text-sm font-medium">Payments</span>
+                    <span class="text-sm font-medium">Paiements</span>
                 </router-link>
 
                 <router-link to="/admin/orders"
@@ -55,7 +55,7 @@
                     :class="route.path === '/admin/orders' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">shopping_bag</span>
-                    <span class="text-sm font-medium">Orders</span>
+                    <span class="text-sm font-medium">Commandes</span>
                 </router-link>
 
                 <router-link to="/admin/products"
@@ -63,7 +63,7 @@
                     :class="route.path === '/admin/products' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">inventory_2</span>
-                    <span class="text-sm font-medium">Products</span>
+                    <span class="text-sm font-medium">Produits</span>
                 </router-link>
 
                 <router-link to="/admin/users"
@@ -71,7 +71,7 @@
                     :class="route.path === '/admin/users' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">manage_accounts</span>
-                    <span class="text-sm font-medium">Users</span>
+                    <span class="text-sm font-medium">Utilisateurs</span>
                 </router-link>
 
                 <router-link to="/admin/categories"
@@ -86,7 +86,7 @@
                     class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
                     @click="sidebarOpen = false">
                     <span class="material-symbols-outlined">settings</span>
-                    <span class="text-sm font-medium">Settings</span>
+                    <span class="text-sm font-medium">Paramètres</span>
                 </router-link>
 
                 <hr class="my-2 border-slate-200/50">
@@ -128,7 +128,7 @@
                 <button @click="handleLogout"
                     class="flex items-center gap-3 px-4 py-2 text-red-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 w-full text-left">
                     <span class="material-symbols-outlined">logout</span>
-                    <span class="text-sm font-medium">Logout</span>
+                    <span class="text-sm font-medium">Déconnexion</span>
                 </button>
             </div>
         </aside>
@@ -146,7 +146,7 @@
                 <router-link to="/admin/settings" class="flex items-center gap-3 pl-6 border-l border-slate-200 hover:opacity-80 transition-opacity ml-auto">
                     <div class="text-right">
                         <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
-                        <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté</p>
+                        <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté(e)</p>
                     </div>
                     <div
                         class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
