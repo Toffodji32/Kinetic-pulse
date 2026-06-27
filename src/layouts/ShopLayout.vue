@@ -14,7 +14,7 @@
                         Catalogue
                     </router-link>
 
-                    <router-link v-if="authStore.isAuthenticated" :to="gymShopPath('/orders')"
+                    <router-link v-if="isConnected" :to="gymShopPath('/orders')"
                         class="text-gray-500 hover:text-indigo-600 font-medium transition-colors">
                         Mes commandes
                     </router-link>
@@ -35,8 +35,8 @@
                     </router-link>
 
                     <!-- Auth -->
-                    <template v-if="authStore.isAuthenticated">
-                        <span class="text-sm font-medium text-gray-600">{{ authStore.user?.name }}</span>
+                    <template v-if="isConnected">
+                        <span class="text-sm font-medium text-gray-600">{{ currentUser?.name }}</span>
                         <el-button size="small" plain @click="handleLogout" style="border-radius: 8px;">
                             Déconnexion
                         </el-button>
@@ -60,23 +60,28 @@
 <script setup>
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useGymAuthStore } from '@/stores/gymAuth'
 import { useCartStore } from '@/stores/cart'
 import { ShoppingCart } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
+const gymAuthStore = useGymAuthStore()
 const cartStore = useCartStore()
 const router = useRouter()
 const route = useRoute()
 
 const gymSlug = computed(() => route.params.gymSlug || '')
+const isConnected = computed(() => authStore.isAuthenticated || !!gymAuthStore.user)
+const currentUser = computed(() => authStore.user || gymAuthStore.user)
 
 function gymShopPath(suffix = '') {
     return gymSlug.value ? `/shop/${gymSlug.value}${suffix}` : `/shop${suffix}`
 }
 
 function handleLogout() {
-    authStore.logout()
+    if (gymAuthStore.user) gymAuthStore.logout()
+    if (authStore.isAuthenticated) authStore.logout()
     router.push(gymShopPath('/login'))
 }
 </script>
