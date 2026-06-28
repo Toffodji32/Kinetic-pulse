@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import router from '../router';
 
-const PRODUCTION_API = 'https://kenetic-pulse-api-production.up.railway.app/api'
+const PRODUCTION_API = 'https://kenetic-pulse-api.onrender.com'
 
 function resolveApiBaseUrl() {
   let url = (import.meta.env.VITE_API_URL || PRODUCTION_API).trim().replace(/\/+$/, '')

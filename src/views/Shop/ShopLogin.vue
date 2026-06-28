@@ -115,7 +115,9 @@
 </template>
 
 <script setup>
+import api from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
+import { useGymAuthStore } from '@/stores/gymAuth'
 import { useShopStore } from '@/stores/shop'
 import { Lock, Message, Phone, User } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
@@ -125,6 +127,7 @@ const router = useRouter()
 const route = useRoute()
 const gymSlug = computed(() => route.params.gymSlug || '')
 const authStore = useAuthStore()
+const gymAuthStore = useGymAuthStore()
 const shopStore = useShopStore()
 
 const activeTab = ref('login')
@@ -195,6 +198,8 @@ async function handleLogin() {
             // client → gym_token (ne touche pas au token admin)
             localStorage.setItem('gym_token', data.token)
             localStorage.setItem('gym_user', JSON.stringify(data.user))
+            gymAuthStore.token = data.token
+            gymAuthStore.user = data.user
 
             const redirect = route.query.redirect
             const defaultShop = gymSlug.value ? `/shop/${gymSlug.value}` : '/shop'
@@ -229,6 +234,8 @@ async function handleRegister() {
             // client → gym_token (ne touche pas au token admin)
             localStorage.setItem('gym_token', result.token)
             localStorage.setItem('gym_user', JSON.stringify(result.user))
+            gymAuthStore.token = result.token
+            gymAuthStore.user = result.user
 
             router.push(gymSlug.value ? `/shop/${gymSlug.value}` : { name: 'shop-home' })
 
