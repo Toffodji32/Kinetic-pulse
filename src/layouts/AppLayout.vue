@@ -237,11 +237,12 @@ onMounted(async () => {
     if (gymAuthStore.token || authStore.token) {
         try {
             const { data } = await api.get('/gym/profile')
-            if (!gymAuthStore.gym) {
-                gymAuthStore.gym = data
-                localStorage.setItem('gym_gym', JSON.stringify(data))
-            }
-        } catch {}
+            gymAuthStore.gym = data
+            localStorage.setItem('gym_gym', JSON.stringify(data))
+        } catch {
+            gymAuthStore.gym = null
+            localStorage.removeItem('gym_gym')
+        }
     }
     if (gymAuthStore.token) {
         gymAuthStore.fetchSubscription().catch(() => {})

@@ -40,8 +40,6 @@ gymHttp.interceptors.response.use(
       localStorage.removeItem('gym_token')
       localStorage.removeItem('gym_user')
       localStorage.removeItem('gym_gym')
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
     }
     return Promise.reject(error)
   }
