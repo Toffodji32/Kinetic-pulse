@@ -13,6 +13,7 @@ import RegisterGym from '@/views/RegisterGym.vue'
 import GymInfo from '@/views/Dashboard/GymInfo.vue'
 import Settings from '@/views/Dashboard/Settings.vue'
 import Subscriptions from '@/views/Dashboard/Subscriptions.vue'
+import SubscriptionTypes from '@/views/Dashboard/SubscriptionTypes.vue'
 import Users from '@/views/Dashboard/Users.vue'
 import Login from '@/views/Login.vue'
 import NotFound from '@/views/NotFound.vue'
@@ -66,7 +67,8 @@ const router = createRouter({
         { path: '', redirect: { name: 'dashboard' } },
         { path: 'dashboard',     name: 'dashboard',           component: Dashboard     },
         { path: 'clients',       name: 'admin-clients',       component: Clients       },
-        { path: 'subscriptions', name: 'admin-subscriptions', component: Subscriptions },
+        { path: 'subscriptions',  name: 'admin-subscriptions',   component: Subscriptions },
+        { path: 'subscription-types', name: 'admin-subscription-types', component: SubscriptionTypes },
         { path: 'payments',      name: 'admin-payments',      component: Payments      },
         { path: 'orders',        name: 'admin-orders',        component: Orders        },
         { path: 'products',      name: 'admin-products',      component: Products      },
