@@ -26,6 +26,7 @@ import ShopOrders from '@/views/Shop/ShopOrders.vue'
 import SuperAdminDashboard from '@/views/SuperAdmin/SuperAdminDashboard.vue'
 import SuperAdminGyms from '@/views/SuperAdmin/SuperAdminGyms.vue'
 import SuperAdminGymDetail from '@/views/SuperAdmin/SuperAdminGymDetail.vue'
+import SuperAdminSettings from '@/views/SuperAdmin/SuperAdminSettings.vue'
 import SuperAdminSubscriptions from '@/views/SuperAdmin/SuperAdminSubscriptions.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
@@ -91,6 +92,7 @@ const router = createRouter({
         { path: 'gyms',          name: 'super-admin-gyms',        component: SuperAdminGyms },
         { path: 'gyms/:id',      name: 'super-admin-gym-detail',  component: SuperAdminGymDetail },
         { path: 'subscriptions', name: 'super-admin-subscriptions', component: SuperAdminSubscriptions },
+        { path: 'settings',     name: 'super-admin-settings',     component: SuperAdminSettings },
       ],
     },
 

@@ -4,14 +4,14 @@
         <!-- Header Section -->
         <div class="mb-10 flex justify-between items-end">
             <div>
-                <h2 class="text-3xl font-black font-headline tracking-tight text-indigo-600">Executive Summary</h2>
-                <p class="text-[#464554] font-medium">Detailed performance metrics for your fitness empire.</p>
+                <h2 class="text-3xl font-black font-headline tracking-tight text-indigo-600">Résumé exécutif</h2>
+                <p class="text-[#464554] font-medium">Indicateurs de performance détaillés pour votre salle.</p>
             </div>
             <div class="flex gap-3">
                 <button
                     class="flex items-center gap-2 px-5 py-2.5 bg-[#e2e7ff] text-[#131b2e] font-semibold rounded-lg hover:bg-[#dae2fd] transition-colors">
                     <span class="material-symbols-outlined text-[20px]">calendar_today</span>
-                    Last 30 Days
+                    30 derniers jours
                 </button>
                 <button @click="dash.fetchStats()"
                     class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-indigo-600/20">
@@ -57,18 +57,18 @@
                         <div class="flex justify-between items-start mb-4">
                             <span class="p-2 bg-white/20 rounded-lg material-symbols-outlined">payments</span>
                         </div>
-                        <p class="text-white/70 font-semibold mb-1">Total Revenue</p>
+                        <p class="text-white/70 font-semibold mb-1">Revenu total</p>
                         <!-- dash.totalRevenue vient du getter du store -->
                         <h3 class="text-4xl font-black font-headline mb-4">
                             {{ formatCurrency(totalRevenue) }}
                         </h3>
                         <div class="flex gap-4 text-sm font-medium">
                             <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
-                                <span class="opacity-70">Today:</span>
+                                <span class="opacity-70">Aujourd'hui :</span>
                                 {{ formatCurrency(todayRevenue) }}
                             </div>
                             <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
-                                <span class="opacity-70">Orders:</span>
+                                <span class="opacity-70">Commandes :</span>
                                 {{ dash.stats?.orders?.total ?? 0 }}
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                         <div class="p-2 bg-[#e1e0ff] text-indigo-600 rounded-lg">
                             <span class="material-symbols-outlined">card_membership</span>
                         </div>
-                        <span class="text-[#464554] font-bold text-xs uppercase tracking-wider">Subscriptions</span>
+                        <span class="text-[#464554] font-bold text-xs uppercase tracking-wider">Abonnements</span>
                     </div>
                     <div>
                         <!-- total = actifs + expirés -->
@@ -95,8 +95,8 @@
                                     :style="{ width: retentionRate + '%' }"></div>
                             </div>
                             <div class="flex justify-between text-xs font-semibold">
-                                <span class="text-green-600">Active: {{ activeSubscriptionsCount }}</span>
-                                <span class="text-red-600">Expired: {{ expiredSubscriptionsCount }}</span>
+                                <span class="text-green-600">Actifs : {{ activeSubscriptionsCount }}</span>
+                                <span class="text-red-600">Expirés : {{ expiredSubscriptionsCount }}</span>
                             </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                         <div class="p-2 bg-green-100 text-green-700 rounded-lg">
                             <span class="material-symbols-outlined">group</span>
                         </div>
-                        <span class="text-[#464554] font-bold text-xs uppercase tracking-wider">Total Clients</span>
+                        <span class="text-[#464554] font-bold text-xs uppercase tracking-wider">Total clients</span>
                     </div>
                     <div>
                         <h3 class="text-3xl font-black font-headline mt-4">
@@ -122,7 +122,7 @@
 
                 <!-- Check-ins aujourd'hui -->
                 <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-indigo-500">
-                    <p class="text-[#464554] text-xs font-bold uppercase tracking-widest mb-1">Today Check-ins</p>
+                    <p class="text-[#464554] text-xs font-bold uppercase tracking-widest mb-1">Check-ins aujourd'hui</p>
                     <div class="flex items-baseline gap-2">
                         <h3 class="text-3xl font-black font-headline">
                             {{ dash.todayCheckins }}
@@ -156,16 +156,16 @@
                     <div class="flex justify-between items-center mb-4">
                         <span
                             class="p-2 bg-[#f2f3ff] text-[#131b2e] rounded-lg material-symbols-outlined">shopping_bag</span>
-                        <p class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">COMMERCE
+                        <p class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">BOUTIQUE
                         </p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-[10px] text-[#464554] font-bold uppercase">Orders</p>
+                            <p class="text-[10px] text-[#464554] font-bold uppercase">Commandes</p>
                             <p class="text-xl font-black font-headline">{{ dash.stats?.orders?.total ?? 0 }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] text-[#464554] font-bold uppercase">Products</p>
+                            <p class="text-[10px] text-[#464554] font-bold uppercase">Produits</p>
                             <p class="text-xl font-black font-headline">{{ dash.stats?.products?.total ?? 0 }}</p>
                         </div>
                     </div>
@@ -173,10 +173,10 @@
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-xs text-red-600 font-bold flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">warning</span>
-                                {{ productStore.outOfStock.length }} Out of stock
+                                {{ productStore.outOfStock.length }} Rupture de stock
                             </span>
                             <router-link to="/admin/products" class="text-indigo-600 text-xs font-bold hover:underline">
-                                Manage Stock
+                                Gérer le stock
                             </router-link>
                         </div>
                         <div v-if="productStore.outOfStock.length > 0" class="space-y-1">
@@ -193,7 +193,7 @@
 
                 <!-- Quick Actions — avec router-link -->
                 <div class="col-span-1 lg:col-span-2 bg-[#f2f3ff] rounded-xl p-6 shadow-sm">
-                    <h4 class="font-bold text-sm mb-4">Quick Management Actions</h4>
+                    <h4 class="font-bold text-sm mb-4">Actions rapides</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <router-link to="/admin/clients"
                             class="flex flex-col items-center gap-2 p-4 bg-white rounded-xl hover:shadow-md transition-shadow group">
@@ -201,7 +201,7 @@
                                 class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                                 <span class="material-symbols-outlined">person_add</span>
                             </div>
-                            <span class="text-xs font-bold">Add Client</span>
+                            <span class="text-xs font-bold">Ajouter un client</span>
                         </router-link>
                         <router-link to="/admin/subscriptions"
                             class="flex flex-col items-center gap-2 p-4 bg-white rounded-xl hover:shadow-md transition-shadow group">
@@ -209,7 +209,7 @@
                                 class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
                                 <span class="material-symbols-outlined">verified</span>
                             </div>
-                            <span class="text-xs font-bold">Subscription</span>
+                            <span class="text-xs font-bold">Abonnement</span>
                         </router-link>
                         <router-link to="/admin/payments"
                             class="flex flex-col items-center gap-2 p-4 bg-white rounded-xl hover:shadow-md transition-shadow group">
@@ -217,7 +217,7 @@
                                 class="w-10 h-10 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
                                 <span class="material-symbols-outlined">add_card</span>
                             </div>
-                            <span class="text-xs font-bold">Register Pay</span>
+                            <span class="text-xs font-bold">Enregistrer un paiement</span>
                         </router-link>
                         <router-link to="/admin/products"
                             class="flex flex-col items-center gap-2 p-4 bg-white rounded-xl hover:shadow-md transition-shadow group">
@@ -225,7 +225,7 @@
                                 class="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center group-hover:bg-slate-800 group-hover:text-white transition-colors">
                                 <span class="material-symbols-outlined">add_box</span>
                             </div>
-                            <span class="text-xs font-bold">Add Product</span>
+                            <span class="text-xs font-bold">Ajouter un produit</span>
                         </router-link>
                     </div>
                 </div>
@@ -239,15 +239,15 @@
                 <div class="lg:col-span-2 bg-white rounded-xl p-8 shadow-sm">
                     <div class="flex justify-between items-center mb-8">
                         <div>
-                            <h4 class="font-bold text-lg font-headline">Revenue Trajectory</h4>
-                            <p class="text-sm text-[#464554]">Monthly growth vs previous period</p>
+                            <h4 class="font-bold text-lg font-headline">Trajectoire des revenus</h4>
+                            <p class="text-sm text-[#464554]">Croissance mensuelle vs période précédente</p>
                         </div>
                         <div class="flex gap-2">
                             <span class="flex items-center gap-2 text-xs font-bold px-3 py-1 bg-[#f2f3ff] rounded-full">
-                                <span class="w-2 h-2 rounded-full bg-indigo-600"></span> Current
+                                <span class="w-2 h-2 rounded-full bg-indigo-600"></span> En cours
                             </span>
                             <span class="flex items-center gap-2 text-xs font-bold px-3 py-1 bg-[#f2f3ff] rounded-full">
-                                <span class="w-2 h-2 rounded-full bg-slate-300"></span> Last Month
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span> Mois précédent
                             </span>
                         </div>
                     </div>
@@ -267,14 +267,14 @@
 
                 <!-- Member Retention — calculé depuis active + expired -->
                 <div class="bg-white rounded-xl p-8 shadow-sm">
-                    <h4 class="font-bold text-lg font-headline mb-8">Member Retention</h4>
+                    <h4 class="font-bold text-lg font-headline mb-8">Rétention des membres</h4>
                     <div class="relative w-48 h-48 mx-auto mb-8">
                         <div class="w-full h-full rounded-full flex items-center justify-center relative overflow-hidden"
                             :style="{ background: `conic-gradient(#4648d4 0deg ${retentionDeg}deg, #ba1a1a ${retentionDeg}deg 360deg)` }">
                             <div
                                 class="absolute inset-0 m-4 bg-white rounded-full flex flex-col items-center justify-center">
                                 <p class="text-3xl font-black font-headline">{{ retentionRate }}%</p>
-                                <p class="text-[10px] font-bold text-[#464554]">RETENTION</p>
+                                <p class="text-[10px] font-bold text-[#464554]">RÉTENTION</p>
                             </div>
                         </div>
                     </div>
@@ -282,14 +282,14 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
-                                <span class="text-sm font-semibold">Active Subscriptions</span>
+                                <span class="text-sm font-semibold">Abonnements actifs</span>
                             </div>
                             <span class="text-sm font-bold">{{ activeSubscriptionsCount }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-red-600"></span>
-                                <span class="text-sm font-semibold">Expired/Churned</span>
+                                <span class="text-sm font-semibold">Expirés/Perdus</span>
                             </div>
                             <span class="text-sm font-bold">{{ expiredSubscriptionsCount }}</span>
                         </div>
@@ -304,10 +304,10 @@
                 <!-- Check-in Feed — données réelles via checkinStore -->
                 <div class="lg:col-span-2 bg-white rounded-xl p-8 shadow-sm">
                     <div class="flex justify-between items-center mb-6">
-                        <h4 class="font-bold text-lg font-headline">Live Check-in Feed</h4>
+                        <h4 class="font-bold text-lg font-headline">Flux de check-ins en direct</h4>
                         <span class="flex items-center gap-1 text-xs text-green-600 font-bold">
                             <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
-                            Live Now
+                            En direct
                         </span>
                     </div>
                     <div v-if="checkinStore.checkins.length === 0" class="text-center text-[#464554] text-sm py-8">
@@ -321,7 +321,7 @@
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm font-bold">{{ checkin.client }}</p>
-                                <p class="text-xs text-[#464554]">Membership: {{ checkin.subscription ?? '—' }}</p>
+                                <p class="text-xs text-[#464554]">Abonnement : {{ checkin.subscription ?? '—' }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-bold">{{ formatTime(checkin.checkinTime) }}</p>
@@ -336,7 +336,7 @@
 
                 <!-- Recent Payments — données réelles via paymentStore -->
                 <div class="bg-white rounded-xl p-8 shadow-sm">
-                    <h4 class="font-bold text-lg font-headline mb-6">Recent Payments</h4>
+                    <h4 class="font-bold text-lg font-headline mb-6">Derniers paiements</h4>
                     <div class="space-y-4">
                         <div v-for="payment in recentPayments" :key="payment.id" class="p-4 bg-[#f2f3ff] rounded-lg">
                             <div class="flex justify-between items-start mb-2">
@@ -356,7 +356,7 @@
 
                 <!-- Recent Orders — données réelles via orderStore -->
                 <div class="bg-white rounded-xl p-8 shadow-sm">
-                    <h4 class="font-bold text-lg font-headline mb-6">E-com Orders</h4>
+                    <h4 class="font-bold text-lg font-headline mb-6">Commandes boutique</h4>
                     <div class="space-y-5">
                         <div v-for="order in recentOrders" :key="order.id" class="flex items-center gap-3">
                             <div class="w-8 h-8 bg-[#e2e7ff] rounded flex items-center justify-center">
@@ -382,7 +382,7 @@
                     </div>
                     <router-link to="/admin/orders"
                         class="w-full mt-6 py-2.5 border-2 border-[#f2f3ff] text-indigo-600 text-xs font-bold rounded-lg hover:bg-[#f2f3ff] transition-colors block text-center">
-                        View All Orders
+                        Voir toutes les commandes
                     </router-link>
                 </div>
 
@@ -474,5 +474,5 @@ const chartBars = [
     { prev: '70%', curr: '75%' },
     { prev: '65%', curr: '95%' },
 ]
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+const months = ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin']
 </script>
