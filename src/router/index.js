@@ -214,7 +214,7 @@ router.beforeEach((to, from) => {
     return true
   }
 
-  // ── 4. Routes admin → ROLE_ADMIN obligatoire ──
+  // ── 4. Routes admin → ROLE_ADMIN ou ROLE_USER ──
   if (to.meta.requiresAdmin) {
     if (!isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } }
@@ -223,7 +223,7 @@ router.beforeEach((to, from) => {
     if (userRoles.includes('ROLE_SUPER_ADMIN')) {
       return { name: 'super-admin-dashboard' }
     }
-    if (!isAdmin) {
+    if (!isAdmin && !isReceptionist) {
       if (isClient) return { name: 'shop-home' }
       return { name: 'login' }
     }

@@ -112,11 +112,11 @@ export const useSubscriptionStore = defineStore('subscription', {
       }
     },
 
-    async renew(id) {
+    async renew(id, payload = {}) {
       this.loading = true
       this.error = null
       try {
-        const { data } = await api.post(`/subscriptions/${id}/renew`)
+        const { data } = await api.post(`/subscriptions/${id}/renew`, payload)
         await this.fetchAll()
         return data
       } catch (err) {

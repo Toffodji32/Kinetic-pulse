@@ -146,7 +146,7 @@
         <!-- ═══════════════════════════════════════
              MODAL CRÉATION ABONNEMENT
         ═══════════════════════════════════════ -->
-        <el-dialog v-model="showCreateModal" title="Nouvel abonnement" width="500px" :close-on-click-modal="false"
+        <el-dialog v-model="showCreateModal" title="Nouvel abonnement" width="540px" :close-on-click-modal="false"
             @closed="resetCreateForm">
             <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-position="top" size="large">
 
@@ -180,6 +180,20 @@
                     </div>
                 </div>
 
+                <el-form-item label="Mode de paiement" prop="payment_method">
+                    <el-radio-group v-model="createForm.payment_method" size="large" class="w-full">
+                        <el-radio-button value="especes" style="flex: 1; text-align: center;">
+                            💵 Espèces
+                        </el-radio-button>
+                        <el-radio-button value="carte" style="flex: 1; text-align: center;">
+                            💳 Carte
+                        </el-radio-button>
+                        <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">
+                            📱 Mobile Money
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+
             </el-form>
 
             <template #footer>
@@ -190,6 +204,50 @@
                     <el-button type="primary" size="large" :loading="subStore.loading" @click="handleCreate"
                         style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700;">
                         Créer l'abonnement
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- ═══════════════════════════════════════
+             MODAL RENOUVELLEMENT AVEC PAIEMENT
+        ═══════════════════════════════════════ -->
+        <el-dialog v-model="showRenewModal" title="Renouveler l'abonnement" width="480px" :close-on-click-modal="false">
+            <div v-if="renewSub" class="space-y-4">
+                <div class="bg-[#f2f3ff] rounded-xl p-4 text-center">
+                    <p class="text-sm text-[#464554]">Client</p>
+                    <p class="font-bold text-lg text-[#131b2e]">{{ renewSub.client }}</p>
+                    <p class="text-sm text-[#464554] mt-2">Type</p>
+                    <p class="font-bold text-indigo-600">{{ renewSub.type }}</p>
+                    <p class="text-2xl font-black text-[#131b2e] mt-2">{{ renewSub.price }} FCFA</p>
+                    <p class="text-xs text-[#464554] mt-1">Durée : {{ selectedType?.durationDays || '—' }} jours</p>
+                </div>
+
+                <el-form ref="renewFormRef" :model="renewForm" :rules="renewRules" label-position="top" size="large">
+                    <el-form-item label="Mode de paiement" prop="payment_method">
+                        <el-radio-group v-model="renewForm.payment_method" size="large" class="w-full">
+                            <el-radio-button value="especes" style="flex: 1; text-align: center;">
+                                💵 Espèces
+                            </el-radio-button>
+                            <el-radio-button value="carte" style="flex: 1; text-align: center;">
+                                💳 Carte
+                            </el-radio-button>
+                            <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">
+                                📱 Mobile Money
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <template #footer>
+                <div class="flex gap-3 justify-end">
+                    <el-button @click="showRenewModal = false" size="large" style="border-radius: 10px;">
+                        Annuler
+                    </el-button>
+                    <el-button type="success" size="large" :loading="renewLoading" @click="confirmRenew"
+                        style="border-radius: 10px; font-weight: 700;">
+                        Confirmer le renouvellement
                     </el-button>
                 </div>
             </template>
@@ -325,16 +383,26 @@ const pageSize = ref(10)
 const historyPage = ref(1)
 const historyPageSize = ref(4)
 const showCreateModal = ref(false)
+const showRenewModal = ref(false)
 const showDetail = ref(false)
 const selectedSub = ref(null)
 const selectedType = ref(null)
 const createFormRef = ref(null)
+const renewFormRef = ref(null)
+const renewLoading = ref(false)
+const renewSub = ref(null)
 
-const createForm = ref({ client_id: null, subscription_type_id: null })
+const createForm = ref({ client_id: null, subscription_type_id: null, payment_method: null })
+const renewForm = ref({ payment_method: null })
 
 const createRules = {
     client_id: [{ required: true, message: 'Sélectionnez un client', trigger: 'change' }],
     subscription_type_id: [{ required: true, message: "Sélectionnez un type d'abonnement", trigger: 'change' }],
+    payment_method: [{ required: true, message: 'Sélectionnez un mode de paiement', trigger: 'change' }],
+}
+
+const renewRules = {
+    payment_method: [{ required: true, message: 'Sélectionnez un mode de paiement', trigger: 'change' }],
 }
 
 // ── Chargement initial ────────────────────────────────────────────────────
@@ -388,7 +456,7 @@ function onTypeChange(typeId) {
 
 // ── Ouvrir modal création ─────────────────────────────────────────────────
 function openCreateModal(clientId = null) {
-    createForm.value = { client_id: clientId, subscription_type_id: null }
+    createForm.value = { client_id: clientId, subscription_type_id: null, payment_method: null }
     selectedType.value = null
     showCreateModal.value = true
 }
@@ -409,6 +477,7 @@ async function handleCreate() {
             await subStore.create({
                 client_id: createForm.value.client_id,
                 subscription_type_id: createForm.value.subscription_type_id,
+                payment_method: createForm.value.payment_method,
             })
             showCreateModal.value = false
             Swal.fire({
@@ -438,34 +507,42 @@ async function openDetail(sub) {
     showDetail.value = true
 }
 
-// ── Renouveler ────────────────────────────────────────────────────────────
-async function handleRenew(sub) {
-    const result = await Swal.fire({
-        icon: 'question',
-        title: 'Renouveler cet abonnement ?',
-        html: `<p>Un nouvel abonnement <strong>${sub.type}</strong> sera créé pour <strong>${sub.client}</strong>.</p>`,
-        showCancelButton: true,
-        confirmButtonColor: '#4f46e5',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Oui, renouveler',
-        cancelButtonText: 'Annuler',
-        reverseButtons: true,
-    })
+// ── Renouveler (ouvre modal paiement) ──────────────────────────────────────
+function handleRenew(sub) {
+    renewSub.value = sub
+    renewForm.value = { payment_method: null }
+    showRenewModal.value = true
+    selectedType.value = typeStore.types.find(t => t.name === sub.type) || null
+}
 
-    if (!result.isConfirmed) return
-
+async function confirmRenew() {
+    if (!renewForm.value.payment_method) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Paiement requis',
+            text: 'Veuillez sélectionner un mode de paiement.',
+            confirmButtonColor: '#4f46e5',
+        })
+        return
+    }
+    renewLoading.value = true
     try {
-        await subStore.renew(sub.id)
+        await subStore.renew(renewSub.value.id, {
+            payment_method: renewForm.value.payment_method,
+        })
+        showRenewModal.value = false
         showDetail.value = false
+        renewLoading.value = false
         Swal.fire({
             icon: 'success',
             title: 'Renouvelé !',
-            text: `L'abonnement de ${sub.client} a été renouvelé avec succès.`,
+            text: `L'abonnement de ${renewSub.value.client} a été renouvelé avec succès.`,
             confirmButtonColor: '#4f46e5',
             timer: 2500,
             showConfirmButton: false,
         })
     } catch {
+        renewLoading.value = false
         Swal.fire({
             icon: 'error',
             title: 'Erreur',
@@ -477,7 +554,7 @@ async function handleRenew(sub) {
 
 // ── Reset ─────────────────────────────────────────────────────────────────
 function resetCreateForm() {
-    createForm.value = { client_id: null, subscription_type_id: null }
+    createForm.value = { client_id: null, subscription_type_id: null, payment_method: null }
     selectedType.value = null
     createFormRef.value?.resetFields()
 }
