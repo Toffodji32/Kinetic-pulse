@@ -349,6 +349,7 @@ function launchFedaPay() {
 
             try {
                 await gymAuthStore.paySubscription(transaction.id, selectedPlan.value)
+                await gymAuthStore.fetchSubscription()
 
                 await Swal.fire({
                     icon: 'success',
