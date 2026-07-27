@@ -510,25 +510,28 @@ const categories = computed(() =>
 )
 
 async function handleCreate() {
-    await createFormRef.value.validate(async (valid) => {
-        if (!valid) return
-        try {
-            await productStore.create(createForm.value)
-            showCreateModal.value = false
-            Swal.fire({
-                icon: 'success', title: 'Produit créé !',
-                text: `${createForm.value.name} a été ajouté au catalogue.`,
-                confirmButtonColor: '#4f46e5', confirmButtonText: 'Super !',
-            })
-            resetCreateForm()
-        } catch {
-            Swal.fire({
-                icon: 'error', title: 'Erreur',
-                text: productStore.error || 'Impossible de créer le produit.',
-                confirmButtonColor: '#4f46e5',
-            })
-        }
-    })
+    try {
+        await createFormRef.value.validate()
+    } catch {
+        return
+    }
+    try {
+        const created = await productStore.create(createForm.value)
+        await productStore.fetchAll()
+        showCreateModal.value = false
+        Swal.fire({
+            icon: 'success', title: 'Produit créé !',
+            text: `${createForm.value.name} a été ajouté au catalogue.`,
+            confirmButtonColor: '#4f46e5', confirmButtonText: 'Super !',
+        })
+        resetCreateForm()
+    } catch {
+        Swal.fire({
+            icon: 'error', title: 'Erreur',
+            text: productStore.error || 'Impossible de créer le produit.',
+            confirmButtonColor: '#4f46e5',
+        })
+    }
 }
 
 // ← CORRECTION : blur + nextTick avant d'ouvrir le modal
@@ -554,29 +557,31 @@ function openEditModal(product) {
 }
 
 async function handleEdit() {
-    await editFormRef.value.validate(async (valid) => {
-        if (!valid) return
-        try {
-            await productStore.update(selectedProduct.value.id, editForm.value)
-            await productStore.fetchAll()
-            selectedProduct.value = productStore.products.find(
-                p => p.id === selectedProduct.value.id
-            )
-            showEditModal.value = false
-            Swal.fire({
-                icon: 'success', title: 'Produit modifié !',
-                confirmButtonColor: '#4f46e5',
-                timer: 2000, showConfirmButton: false,
-            })
-        } catch (err) {
-            console.error('Erreur modification produit:', err)
-            Swal.fire({
-                icon: 'error', title: 'Erreur',
-                text: productStore.error || 'Impossible de modifier le produit.',
-                confirmButtonColor: '#4f46e5',
-            })
-        }
-    })
+    try {
+        await editFormRef.value.validate()
+    } catch {
+        return
+    }
+    try {
+        await productStore.update(selectedProduct.value.id, editForm.value)
+        await productStore.fetchAll()
+        selectedProduct.value = productStore.products.find(
+            p => p.id === selectedProduct.value.id
+        )
+        showEditModal.value = false
+        Swal.fire({
+            icon: 'success', title: 'Produit modifié !',
+            confirmButtonColor: '#4f46e5',
+            timer: 2000, showConfirmButton: false,
+        })
+    } catch (err) {
+        console.error('Erreur modification produit:', err)
+        Swal.fire({
+            icon: 'error', title: 'Erreur',
+            text: productStore.error || 'Impossible de modifier le produit.',
+            confirmButtonColor: '#4f46e5',
+        })
+    }
 }
 
 async function handleDelete(product) {

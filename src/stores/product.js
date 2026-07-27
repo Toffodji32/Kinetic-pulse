@@ -58,7 +58,6 @@ export const useProductStore = defineStore('product', {
         const { data } = await api.post('/products', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
-        await this.fetchAll()
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur création produit'
@@ -87,7 +86,6 @@ export const useProductStore = defineStore('product', {
         const { data } = await api.post(`/products/${id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
-        await this.fetchAll()
         return data
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur modification produit'
