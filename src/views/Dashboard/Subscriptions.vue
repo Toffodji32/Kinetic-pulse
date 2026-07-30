@@ -1,397 +1,366 @@
 <template>
-  <div class="bg-[#faf8ff] min-h-screen p-4 sm:p-6">
+    <div class="bg-[#faf8ff] min-h-screen p-6">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6 sm:mb-8">
-      <div>
-        <h2 class="text-2xl sm:text-3xl font-black font-headline tracking-tight text-indigo-600">Abonnements</h2>
-        <p class="text-[#464554] font-medium text-sm sm:text-base">Gestion de tous les abonnements</p>
-      </div>
-      <el-button type="primary" size="large" @click="openCreateModal()" class="hidden sm:inline-flex"
-        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700; padding: 12px 20px;">
-        <span class="material-symbols-outlined text-lg mr-1">add</span>
-        Nouvel abonnement
-      </el-button>
-    </div>
-
-    <!-- Stats rapides -->
-    <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
-      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border-l-4 border-indigo-500">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-[#464554] mb-1">Total clients</p>
-        <p class="text-xl sm:text-3xl font-black text-[#131b2e]">{{ subStore.latestPerClient.length }}</p>
-      </div>
-      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border-l-4 border-green-500">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-[#464554] mb-1">Actifs</p>
-        <p class="text-xl sm:text-3xl font-black text-green-600">{{ subStore.activeSubscriptions.length }}</p>
-      </div>
-      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border-l-4 border-red-400">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-[#464554] mb-1">Expirés</p>
-        <p class="text-xl sm:text-3xl font-black text-red-500">{{ subStore.expiredSubscriptions.length }}</p>
-      </div>
-    </div>
-
-    <!-- Filtres + Recherche -->
-    <div class="bg-white rounded-2xl p-3 sm:p-4 shadow-sm mb-6 flex flex-wrap gap-3 items-center">
-      <el-input v-model="search" placeholder="Rechercher par client, type..." size="large" clearable style="max-width: 100%; width: 100%; sm:max-width: 320px; sm:width: auto;">
-        <template #prefix><span class="material-symbols-outlined text-lg text-[#464554]">search</span></template>
-      </el-input>
-      <el-select v-model="filterStatus" placeholder="Tous les statuts" size="large" clearable style="width: 100%; sm:width: 180px;" class="sm:!w-[180px]">
-        <el-option label="Actif" value="Actif" />
-        <el-option label="Expiré" value="Expiré" />
-      </el-select>
-      <span class="text-[#464554] text-sm font-medium sm:ml-auto">{{ filteredSubs.length }} abonnement(s)</span>
-    </div>
-
-    <!-- Loading skeleton -->
-    <div v-if="subStore.loading" class="space-y-3 sm:space-y-4">
-      <div v-for="i in 4" :key="i" class="bg-white rounded-2xl p-4 shadow-sm animate-pulse">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gray-100 rounded-full"></div>
-          <div class="flex-1">
-            <div class="h-4 bg-gray-100 rounded w-40 mb-2"></div>
-            <div class="h-3 bg-gray-100 rounded w-60"></div>
-          </div>
-          <div class="h-6 bg-gray-100 rounded w-16"></div>
-        </div>
-      </div>
-    </div>
-
-    <template v-else>
-
-      <!-- Mobile cards -->
-      <div class="sm:hidden space-y-3 mb-6">
-        <div v-for="sub in paginatedSubs" :key="sub.id" @click="openDetail(sub)"
-          class="bg-white rounded-2xl p-4 shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex items-center gap-2 min-w-0">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0" :style="{ backgroundColor: getAvatarColor(sub.client) }">
-                {{ sub.client?.charAt(0) }}
-              </div>
-              <div class="min-w-0">
-                <p class="font-bold text-[#131b2e] text-sm truncate">{{ sub.client }}</p>
-                <p class="text-xs text-indigo-600 font-semibold">{{ sub.type }}</p>
-              </div>
-            </div>
-            <el-tag :type="sub.status === 'Actif' ? 'success' : 'danger'" size="small" round>{{ sub.status }}</el-tag>
-          </div>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-[#464554]">{{ sub.startDate }} →</span>
-            <span class="font-semibold" :class="sub.status === 'Actif' ? 'text-green-600' : 'text-red-500'">{{ sub.endDate }}</span>
-          </div>
-          <div class="mt-3">
-            <div class="w-full bg-[#f2f3ff] h-1.5 rounded-full overflow-hidden">
-              <div class="h-full rounded-full transition-all"
-                :class="sub.status === 'Actif' ? 'bg-green-500' : 'bg-red-400'"
-                :style="{ width: sub.status === 'Actif' ? Math.min(calculateDaysLeft(sub), 100) + '%' : '100%' }"></div>
-            </div>
-            <p class="text-[10px] text-[#464554] mt-1" v-if="sub.status === 'Actif'">
-              {{ calculateDaysLeft(sub) }}% du temps restant
-            </p>
-          </div>
-        </div>
-        <!-- Empty mobile -->
-        <div v-if="paginatedSubs.length === 0" class="flex flex-col items-center py-12">
-          <span class="material-symbols-outlined text-5xl text-gray-200 mb-3">card_membership</span>
-          <p class="text-[#464554] font-medium mb-3">Aucun abonnement trouvé</p>
-        </div>
-      </div>
-
-      <!-- Desktop table -->
-      <div class="hidden sm:block bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-        <el-table :data="paginatedSubs" style="width: 100%" empty-text="Aucun abonnement trouvé">
-          <el-table-column label="Client" min-width="180">
-            <template #default="{ row }">
-              <div class="flex items-center gap-3 py-1">
-                <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0" :style="{ backgroundColor: getAvatarColor(row.client) }">{{ row.client?.charAt(0) }}</div>
-                <span class="font-bold text-[#131b2e]">{{ row.client }}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="Type" min-width="150">
-            <template #default="{ row }">
-              <span class="font-semibold text-indigo-600">{{ row.type }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Prix" min-width="100">
-            <template #default="{ row }">
-              <span class="font-bold text-[#131b2e]">{{ row.price }} FCFA</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Période" min-width="200">
-            <template #default="{ row }">
-              <div class="text-sm">
-                <span class="text-[#464554]">{{ row.startDate }}</span>
-                <span class="text-[#464554] mx-1">→</span>
-                <span class="font-semibold" :class="row.status === 'Actif' ? 'text-green-600' : 'text-red-500'">{{ row.endDate }}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="Statut" min-width="110" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === 'Actif' ? 'success' : 'danger'" size="small" round>{{ row.status }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" min-width="180" align="center">
-            <template #default="{ row }">
-              <div class="flex gap-2 justify-center">
-                <el-button size="small" @click="openDetail(row)" style="background-color: #e0e7ff; color: #4f46e5; border: none; border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 44px;">
-                  <span class="material-symbols-outlined text-sm mr-1">visibility</span>
-                  Voir
-                </el-button>
-                <el-button size="small" type="success" plain @click="handleRenew(row)" style="border-radius: 8px; min-height: 36px; min-width: 44px;">
-                  <span class="material-symbols-outlined text-sm">refresh</span>
-                </el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-
-    </template>
-
-    <!-- Pagination -->
-    <div class="flex justify-center">
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
-        :total="filteredSubs.length" layout="total, sizes, prev, pager, next" background />
-    </div>
-
-    <!-- Mobile FAB -->
-    <button @click="openCreateModal()"
-      class="sm:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-50">
-      <span class="material-symbols-outlined text-2xl">add</span>
-    </button>
-
-    <!-- ═══════════════════════════════════════
-         MODAL CRÉATION ABONNEMENT (responsive)
-    ═══════════════════════════════════════ -->
-    <div class="sm:hidden">
-      <el-drawer v-model="showCreateModal" direction="btt" size="90%" :close-on-click-modal="false" @closed="resetCreateForm" title="Nouvel abonnement">
-        <template #default>
-          <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-position="top" size="large" class="px-2">
-            <el-form-item label="Client" prop="client_id">
-              <el-select v-model="createForm.client_id" placeholder="Rechercher un client..." filterable style="width: 100%" :loading="clientStore.loading">
-                <el-option v-for="c in clientStore.clients" :key="c.id" :label="`${c.firstName} ${c.lastName}`" :value="c.id" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="Type d'abonnement" prop="subscription_type_id">
-              <el-select v-model="createForm.subscription_type_id" placeholder="Choisir un type..." style="width: 100%" :loading="typeStore.loading" @change="onTypeChange">
-                <el-option v-for="t in typeStore.types" :key="t.id" :value="t.id" :label="`${t.name} — ${t.price} FCFA / ${t.durationDays} jours`" />
-              </el-select>
-            </el-form-item>
-            <div v-if="selectedType" class="bg-[#f2f3ff] rounded-xl p-4 mb-2">
-              <div class="flex justify-between items-center">
-                <div>
-                  <p class="font-bold text-indigo-600">{{ selectedType.name }}</p>
-                  <p class="text-sm text-[#464554]">Durée : {{ selectedType.durationDays }} jours</p>
-                </div>
-                <p class="text-xl font-black text-[#131b2e]">{{ selectedType.price }} FCFA</p>
-              </div>
-              <div class="mt-3 text-xs text-[#464554] flex gap-4">
-                <span>Début : <strong>{{ today }}</strong></span>
-                <span>Fin : <strong>{{ computedEndDate }}</strong></span>
-              </div>
-            </div>
-            <el-form-item label="Mode de paiement" prop="payment_method">
-              <el-radio-group v-model="createForm.payment_method" size="large" class="w-full flex flex-col sm:flex-row gap-2">
-                <el-radio-button value="especes" style="flex: 1; text-align: center;">💵 Espèces</el-radio-button>
-                <el-radio-button value="carte" style="flex: 1; text-align: center;">💳 Carte</el-radio-button>
-                <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">📱 Mobile Money</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </template>
-        <template #footer>
-          <div class="flex gap-3">
-            <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px; flex: 1; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="subStore.loading" @click="handleCreate"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; flex: 1; min-height: 44px;">
-              Créer
-            </el-button>
-          </div>
-        </template>
-      </el-drawer>
-    </div>
-    <div class="hidden sm:block">
-      <el-dialog v-model="showCreateModal" title="Nouvel abonnement" width="540px" :close-on-click-modal="false" @closed="resetCreateForm">
-        <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-position="top" size="large">
-          <el-form-item label="Client" prop="client_id">
-            <el-select v-model="createForm.client_id" placeholder="Rechercher un client..." filterable style="width: 100%" :loading="clientStore.loading">
-              <el-option v-for="c in clientStore.clients" :key="c.id" :label="`${c.firstName} ${c.lastName}`" :value="c.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="Type d'abonnement" prop="subscription_type_id">
-            <el-select v-model="createForm.subscription_type_id" placeholder="Choisir un type..." style="width: 100%" :loading="typeStore.loading" @change="onTypeChange">
-              <el-option v-for="t in typeStore.types" :key="t.id" :value="t.id" :label="`${t.name} — ${t.price} FCFA / ${t.durationDays} jours`" />
-            </el-select>
-          </el-form-item>
-          <div v-if="selectedType" class="bg-[#f2f3ff] rounded-xl p-4 mb-2">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="font-bold text-indigo-600">{{ selectedType.name }}</p>
-                <p class="text-sm text-[#464554]">Durée : {{ selectedType.durationDays }} jours</p>
-              </div>
-              <p class="text-2xl font-black text-[#131b2e]">{{ selectedType.price }} FCFA</p>
-            </div>
-            <div class="mt-3 text-xs text-[#464554] flex gap-4">
-              <span>Début : <strong>{{ today }}</strong></span>
-              <span>Fin : <strong>{{ computedEndDate }}</strong></span>
-            </div>
-          </div>
-          <el-form-item label="Mode de paiement" prop="payment_method">
-            <el-radio-group v-model="createForm.payment_method" size="large" class="w-full">
-              <el-radio-button value="especes" style="flex: 1; text-align: center;">💵 Espèces</el-radio-button>
-              <el-radio-button value="carte" style="flex: 1; text-align: center;">💳 Carte</el-radio-button>
-              <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">📱 Mobile Money</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="flex gap-3 justify-end">
-            <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="subStore.loading" @click="handleCreate"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; min-height: 44px;">
-              Créer l'abonnement
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         MODAL RENOUVELLEMENT (responsive)
-    ═══════════════════════════════════════ -->
-    <div class="sm:hidden">
-      <el-drawer v-model="showRenewModal" direction="btt" size="70%" :close-on-click-modal="false" title="Renouveler l'abonnement">
-        <template #default>
-          <div v-if="renewSub" class="px-2 space-y-4">
-            <div class="bg-[#f2f3ff] rounded-xl p-4 text-center">
-              <p class="text-sm text-[#464554]">Client</p>
-              <p class="font-bold text-lg text-[#131b2e]">{{ renewSub.client }}</p>
-              <p class="text-sm text-[#464554] mt-2">Type</p>
-              <p class="font-bold text-indigo-600">{{ renewSub.type }}</p>
-              <p class="text-xl font-black text-[#131b2e] mt-2">{{ renewSub.price }} FCFA</p>
-              <p class="text-xs text-[#464554] mt-1">Durée : {{ selectedType?.durationDays || '—' }} jours</p>
-            </div>
-            <el-form ref="renewFormRef" :model="renewForm" :rules="renewRules" label-position="top" size="large">
-              <el-form-item label="Mode de paiement" prop="payment_method">
-                <el-radio-group v-model="renewForm.payment_method" size="large" class="w-full flex flex-col gap-2">
-                  <el-radio-button value="especes" style="flex: 1; text-align: center;">💵 Espèces</el-radio-button>
-                  <el-radio-button value="carte" style="flex: 1; text-align: center;">💳 Carte</el-radio-button>
-                  <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">📱 Mobile Money</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-            </el-form>
-          </div>
-        </template>
-        <template #footer>
-          <div class="flex gap-3">
-            <el-button @click="showRenewModal = false" size="large" style="border-radius: 10px; flex: 1; min-height: 44px;">Annuler</el-button>
-            <el-button type="success" size="large" :loading="renewLoading" @click="confirmRenew" style="border-radius: 10px; font-weight: 700; flex: 1; min-height: 44px;">Confirmer</el-button>
-          </div>
-        </template>
-      </el-drawer>
-    </div>
-    <div class="hidden sm:block">
-      <el-dialog v-model="showRenewModal" title="Renouveler l'abonnement" width="480px" :close-on-click-modal="false">
-        <div v-if="renewSub" class="space-y-4">
-          <div class="bg-[#f2f3ff] rounded-xl p-4 text-center">
-            <p class="text-sm text-[#464554]">Client</p>
-            <p class="font-bold text-lg text-[#131b2e]">{{ renewSub.client }}</p>
-            <p class="text-sm text-[#464554] mt-2">Type</p>
-            <p class="font-bold text-indigo-600">{{ renewSub.type }}</p>
-            <p class="text-2xl font-black text-[#131b2e] mt-2">{{ renewSub.price }} FCFA</p>
-            <p class="text-xs text-[#464554] mt-1">Durée : {{ selectedType?.durationDays || '—' }} jours</p>
-          </div>
-          <el-form ref="renewFormRef" :model="renewForm" :rules="renewRules" label-position="top" size="large">
-            <el-form-item label="Mode de paiement" prop="payment_method">
-              <el-radio-group v-model="renewForm.payment_method" size="large" class="w-full">
-                <el-radio-button value="especes" style="flex: 1; text-align: center;">💵 Espèces</el-radio-button>
-                <el-radio-button value="carte" style="flex: 1; text-align: center;">💳 Carte</el-radio-button>
-                <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">📱 Mobile Money</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <template #footer>
-          <div class="flex gap-3 justify-end">
-            <el-button @click="showRenewModal = false" size="large" style="border-radius: 10px; min-height: 44px;">Annuler</el-button>
-            <el-button type="success" size="large" :loading="renewLoading" @click="confirmRenew" style="border-radius: 10px; font-weight: 700; min-height: 44px;">Confirmer le renouvellement</el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         DRAWER DÉTAIL ABONNEMENT
-    ═══════════════════════════════════════ -->
-    <el-drawer v-model="showDetail" direction="rtl" size="440px" :with-header="false" class="!w-full sm:!w-[440px]">
-      <div v-if="selectedSub" class="p-4 sm:p-6 overflow-y-auto h-full">
-        <div class="flex flex-col items-center mb-8 pt-4">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center font-black text-xl sm:text-2xl text-white mb-4"
-            :style="{ backgroundColor: getAvatarColor(selectedSub.client) }">
-            {{ selectedSub.client?.charAt(0) }}
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-[#131b2e]">{{ selectedSub.client }}</h2>
-          <el-tag :type="selectedSub.status === 'Actif' ? 'success' : 'danger'" size="large" round class="mt-2">{{ selectedSub.status }}</el-tag>
-        </div>
-        <div class="space-y-3 mb-8">
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Type</span>
-            <span class="font-bold text-indigo-600">{{ selectedSub.type }}</span>
-          </div>
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Prix</span>
-            <span class="font-bold text-[#131b2e]">{{ selectedSub.price }} FCFA</span>
-          </div>
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Début</span>
-            <span class="font-bold text-[#131b2e]">{{ selectedSub.startDate }}</span>
-          </div>
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Fin</span>
-            <span class="font-bold" :class="selectedSub.status === 'Actif' ? 'text-green-600' : 'text-red-500'">{{ selectedSub.endDate }}</span>
-          </div>
-        </div>
-        <div class="mb-6">
-          <div class="flex items-center justify-between mb-4">
+        <!-- Header -->
+        <div class="flex justify-between items-end mb-8">
             <div>
-              <p class="text-sm font-bold uppercase tracking-widest text-[#464554]">Historique client</p>
-              <p class="text-xs text-slate-500">Tous les abonnements de {{ selectedSub.client }}</p>
+                <h2 class="text-3xl font-black font-headline tracking-tight text-indigo-600">Abonnements</h2>
+                <p class="text-[#464554] font-medium">Gestion de tous les abonnements</p>
             </div>
-            <span class="text-xs font-semibold text-[#4f46e5]">{{ clientHistory.length }} ligne(s)</span>
-          </div>
-          <div class="space-y-3">
-            <div v-if="clientHistory.length === 0" class="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">Aucune donnée historique disponible.</div>
-            <div v-for="history in paginatedClientHistory" :key="history.id" class="bg-white rounded-xl p-4 border shadow-sm">
-              <div class="flex justify-between items-center gap-4">
-                <div class="min-w-0">
-                  <p class="font-semibold text-[#131b2e] text-sm">{{ history.type }}</p>
-                  <p class="text-xs text-[#6b7280]">{{ history.startDate }} → {{ history.endDate }}</p>
-                  <p class="text-xs text-[#464554] mt-1">{{ history.price }} FCFA</p>
-                </div>
-                <el-tag :type="history.status === 'Actif' ? 'success' : 'danger'" size="small" round>{{ history.status }}</el-tag>
-              </div>
-            </div>
-          </div>
-          <div v-if="clientHistory.length > historyPageSize" class="mt-4">
-            <el-pagination v-model:current-page="historyPage" :page-size="historyPageSize"
-              :total="clientHistory.length" layout="prev, pager, next" background />
-          </div>
+            <el-button type="primary" size="large" @click="openCreateModal()"
+                style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;">
+                <el-icon class="mr-2">
+                    <Plus />
+                </el-icon>
+                Nouvel abonnement
+            </el-button>
         </div>
-        <el-button type="success" size="large" class="w-full mb-3 min-h-[44px]"
-          style="border-radius: 12px; font-weight: 700;" @click="handleRenew(selectedSub)">
-          <span class="material-symbols-outlined text-lg mr-1">refresh</span>
-          Renouveler l'abonnement
-        </el-button>
-        <el-button type="primary" size="large" class="w-full min-h-[44px]"
-          style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;" @click="openCreateModalForClient(selectedSub)">
-          <span class="material-symbols-outlined text-lg mr-1">add</span>
-          Nouveau type d'abonnement
-        </el-button>
-      </div>
-    </el-drawer>
 
-  </div>
+        <!-- Stats rapides -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-indigo-500">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Total clients</p>
+                <p class="text-3xl font-black text-[#131b2e]">{{ subStore.latestPerClient.length }}</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-green-500">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Actifs</p>
+                <p class="text-3xl font-black text-green-600">{{ subStore.activeSubscriptions.length }}</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-red-400">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-1">Expirés (non renouvelés)</p>
+                <p class="text-3xl font-black text-red-500">{{ subStore.expiredSubscriptions.length }}</p>
+            </div>
+        </div>
+
+        <!-- Filtres + Recherche -->
+        <div class="bg-white rounded-xl p-4 shadow-sm mb-6 flex flex-wrap gap-4 items-center">
+            <el-input v-model="search" placeholder="Rechercher par client, type..." size="large" clearable
+                style="max-width: 320px;">
+                <template #prefix><el-icon>
+                        <Search />
+                    </el-icon></template>
+            </el-input>
+
+            <el-select v-model="filterStatus" placeholder="Tous les statuts" size="large" clearable
+                style="width: 180px;">
+                <el-option label="Actif" value="Actif" />
+                <el-option label="Expiré" value="Expiré" />
+            </el-select>
+
+            <span class="text-[#464554] text-sm font-medium ml-auto">
+                {{ filteredSubs.length }} abonnement(s)
+            </span>
+        </div>
+
+        <!-- Loading -->
+        <div v-if="subStore.loading" class="flex justify-center py-20">
+            <el-icon class="animate-spin text-indigo-600 text-4xl">
+                <Loading />
+            </el-icon>
+        </div>
+
+        <!-- Tableau -->
+        <div v-else class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <el-table :data="paginatedSubs" style="width: 100%" empty-text="Aucun abonnement trouvé">
+
+                <!-- Client -->
+                <el-table-column label="Client" min-width="180">
+                    <template #default="{ row }">
+                        <div class="flex items-center gap-3 py-1">
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0"
+                                :style="{ backgroundColor: getAvatarColor(row.client) }">
+                                {{ row.client?.charAt(0) }}
+                            </div>
+                            <span class="font-bold text-[#131b2e]">{{ row.client }}</span>
+                        </div>
+                    </template>
+                </el-table-column>
+
+                <!-- Type -->
+                <el-table-column label="Type" min-width="150">
+                    <template #default="{ row }">
+                        <span class="font-semibold text-indigo-600">{{ row.type }}</span>
+                    </template>
+                </el-table-column>
+
+                <!-- Prix -->
+                <el-table-column label="Prix" min-width="100">
+                    <template #default="{ row }">
+                        <span class="font-bold text-[#131b2e]">{{ row.price }} FCFA</span>
+                    </template>
+                </el-table-column>
+
+                <!-- Dates -->
+                <el-table-column label="Période" min-width="200">
+                    <template #default="{ row }">
+                        <div class="text-sm">
+                            <span class="text-[#464554]">{{ row.startDate }}</span>
+                            <span class="text-[#464554] mx-1">→</span>
+                            <span class="font-semibold"
+                                :class="row.status === 'Actif' ? 'text-green-600' : 'text-red-500'">
+                                {{ row.endDate }}
+                            </span>
+                        </div>
+                    </template>
+                </el-table-column>
+
+                <!-- Statut -->
+                <el-table-column label="Statut" min-width="110" align="center">
+                    <template #default="{ row }">
+                        <el-tag :type="row.status === 'Actif' ? 'success' : 'danger'" size="small" round>
+                            {{ row.status }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+
+                <!-- Actions -->
+                <el-table-column label="Actions" min-width="180" align="center">
+                    <template #default="{ row }">
+                        <div class="flex gap-2 justify-center">
+                            <el-button size="small" @click="openDetail(row)"
+                                style="background-color: #e0e7ff; color: #4f46e5; border: none; border-radius: 8px; font-weight: 600;">
+                                <el-icon class="mr-1">
+                                    <View />
+                                </el-icon>
+                                Voir
+                            </el-button>
+                            <el-button size="small" type="success" plain @click="handleRenew(row)"
+                                style="border-radius: 8px;">
+                                <el-icon>
+                                    <Refresh />
+                                </el-icon>
+                            </el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center">
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
+                :total="filteredSubs.length" layout="total, sizes, prev, pager, next" background />
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             MODAL CRÉATION ABONNEMENT
+        ═══════════════════════════════════════ -->
+        <el-dialog v-model="showCreateModal" title="Nouvel abonnement" width="540px" :close-on-click-modal="false"
+            @closed="resetCreateForm">
+            <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-position="top" size="large">
+
+                <el-form-item label="Client" prop="client_id">
+                    <el-select v-model="createForm.client_id" placeholder="Rechercher un client..." filterable
+                        style="width: 100%" :loading="clientStore.loading">
+                        <el-option v-for="c in clientStore.clients" :key="c.id" :label="`${c.firstName} ${c.lastName}`"
+                            :value="c.id" />
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="Type d'abonnement" prop="subscription_type_id">
+                    <el-select v-model="createForm.subscription_type_id" placeholder="Choisir un type..."
+                        style="width: 100%" :loading="typeStore.loading" @change="onTypeChange">
+                        <el-option v-for="t in typeStore.types" :key="t.id" :value="t.id"
+                            :label="`${t.name} — ${t.price} FCFA / ${t.durationDays} jours`" />
+                    </el-select>
+                </el-form-item>
+
+                <div v-if="selectedType" class="bg-[#f2f3ff] rounded-xl p-4 mb-2">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-indigo-600">{{ selectedType.name }}</p>
+                            <p class="text-sm text-[#464554]">Durée : {{ selectedType.durationDays }} jours</p>
+                        </div>
+                        <p class="text-2xl font-black text-[#131b2e]">{{ selectedType.price }} FCFA</p>
+                    </div>
+                    <div class="mt-3 text-xs text-[#464554] flex gap-4">
+                        <span>Début : <strong>{{ today }}</strong></span>
+                        <span>Fin : <strong>{{ computedEndDate }}</strong></span>
+                    </div>
+                </div>
+
+                <el-form-item label="Mode de paiement" prop="payment_method">
+                    <el-radio-group v-model="createForm.payment_method" size="large" class="w-full">
+                        <el-radio-button value="especes" style="flex: 1; text-align: center;">
+                            💵 Espèces
+                        </el-radio-button>
+                        <el-radio-button value="carte" style="flex: 1; text-align: center;">
+                            💳 Carte
+                        </el-radio-button>
+                        <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">
+                            📱 Mobile Money
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+
+            </el-form>
+
+            <template #footer>
+                <div class="flex gap-3 justify-end">
+                    <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px;">
+                        Annuler
+                    </el-button>
+                    <el-button type="primary" size="large" :loading="subStore.loading" @click="handleCreate"
+                        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700;">
+                        Créer l'abonnement
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- ═══════════════════════════════════════
+             MODAL RENOUVELLEMENT AVEC PAIEMENT
+        ═══════════════════════════════════════ -->
+        <el-dialog v-model="showRenewModal" title="Renouveler l'abonnement" width="480px" :close-on-click-modal="false">
+            <div v-if="renewSub" class="space-y-4">
+                <div class="bg-[#f2f3ff] rounded-xl p-4 text-center">
+                    <p class="text-sm text-[#464554]">Client</p>
+                    <p class="font-bold text-lg text-[#131b2e]">{{ renewSub.client }}</p>
+                    <p class="text-sm text-[#464554] mt-2">Type</p>
+                    <p class="font-bold text-indigo-600">{{ renewSub.type }}</p>
+                    <p class="text-2xl font-black text-[#131b2e] mt-2">{{ renewSub.price }} FCFA</p>
+                    <p class="text-xs text-[#464554] mt-1">Durée : {{ selectedType?.durationDays || '—' }} jours</p>
+                </div>
+
+                <el-form ref="renewFormRef" :model="renewForm" :rules="renewRules" label-position="top" size="large">
+                    <el-form-item label="Mode de paiement" prop="payment_method">
+                        <el-radio-group v-model="renewForm.payment_method" size="large" class="w-full">
+                            <el-radio-button value="especes" style="flex: 1; text-align: center;">
+                                💵 Espèces
+                            </el-radio-button>
+                            <el-radio-button value="carte" style="flex: 1; text-align: center;">
+                                💳 Carte
+                            </el-radio-button>
+                            <el-radio-button value="mobile_money" style="flex: 1; text-align: center;">
+                                📱 Mobile Money
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <template #footer>
+                <div class="flex gap-3 justify-end">
+                    <el-button @click="showRenewModal = false" size="large" style="border-radius: 10px;">
+                        Annuler
+                    </el-button>
+                    <el-button type="success" size="large" :loading="renewLoading" @click="confirmRenew"
+                        style="border-radius: 10px; font-weight: 700;">
+                        Confirmer le renouvellement
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- ═══════════════════════════════════════
+             DRAWER DÉTAIL ABONNEMENT
+        ═══════════════════════════════════════ -->
+        <el-drawer v-model="showDetail" direction="rtl" size="440px" :with-header="false">
+            <div v-if="selectedSub" class="p-6">
+
+                <!-- En-tête -->
+                <div class="flex flex-col items-center mb-8 pt-4">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl text-white mb-4"
+                        :style="{ backgroundColor: getAvatarColor(selectedSub.client) }">
+                        {{ selectedSub.client?.charAt(0) }}
+                    </div>
+                    <h2 class="text-2xl font-black text-[#131b2e]">{{ selectedSub.client }}</h2>
+                    <el-tag :type="selectedSub.status === 'Actif' ? 'success' : 'danger'" size="large" round
+                        class="mt-2">
+                        {{ selectedSub.status }}
+                    </el-tag>
+                </div>
+
+                <!-- Détails abonnement actuel -->
+                <div class="space-y-3 mb-8">
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Type</span>
+                        <span class="font-bold text-indigo-600">{{ selectedSub.type }}</span>
+                    </div>
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Prix</span>
+                        <span class="font-bold text-[#131b2e]">{{ selectedSub.price }} FCFA</span>
+                    </div>
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Début</span>
+                        <span class="font-bold text-[#131b2e]">{{ selectedSub.startDate }}</span>
+                    </div>
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Fin</span>
+                        <span class="font-bold"
+                            :class="selectedSub.status === 'Actif' ? 'text-green-600' : 'text-red-500'">
+                            {{ selectedSub.endDate }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Historique complet du client -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-sm font-bold uppercase tracking-widest text-[#464554]">
+                                Historique client
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                Tous les abonnements de {{ selectedSub.client }}
+                            </p>
+                        </div>
+                        <span class="text-xs font-semibold text-[#4f46e5]">
+                            {{ clientHistory.length }} ligne(s)
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div v-if="clientHistory.length === 0"
+                            class="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+                            Aucune donnée historique disponible.
+                        </div>
+                        <div v-for="history in paginatedClientHistory" :key="history.id"
+                            class="bg-white rounded-xl p-4 border shadow-sm">
+                            <div class="flex justify-between items-center gap-4">
+                                <div>
+                                    <p class="font-semibold text-[#131b2e]">{{ history.type }}</p>
+                                    <p class="text-sm text-[#6b7280]">
+                                        {{ history.startDate }} → {{ history.endDate }}
+                                    </p>
+                                    <p class="text-xs text-[#464554] mt-1">{{ history.price }} FCFA</p>
+                                </div>
+                                <el-tag :type="history.status === 'Actif' ? 'success' : 'danger'" size="small" round>
+                                    {{ history.status }}
+                                </el-tag>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="clientHistory.length > historyPageSize" class="mt-4">
+                        <el-pagination v-model:current-page="historyPage" :page-size="historyPageSize"
+                            :total="clientHistory.length" layout="prev, pager, next" background />
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <el-button type="success" size="large" class="w-full mb-3"
+                    style="border-radius: 12px; font-weight: 700;" @click="handleRenew(selectedSub)">
+                    <el-icon class="mr-2">
+                        <Refresh />
+                    </el-icon>
+                    Renouveler l'abonnement
+                </el-button>
+
+                <el-button type="primary" size="large" class="w-full"
+                    style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;"
+                    @click="openCreateModalForClient(selectedSub)">
+                    <el-icon class="mr-2">
+                        <Plus />
+                    </el-icon>
+                    Nouveau type d'abonnement
+                </el-button>
+
+            </div>
+        </el-drawer>
+
+    </div>
 </template>
 
 <script setup>
@@ -598,15 +567,5 @@ function getAvatarColor(name) {
     ]
     if (!name) return colors[0]
     return colors[name.charCodeAt(0) % colors.length]
-}
-
-function calculateDaysLeft(sub) {
-    if (!sub.startDate || !sub.endDate) return 0
-    const start = new Date(sub.startDate)
-    const end = new Date(sub.endDate)
-    const now = new Date()
-    const total = (end - start) / (1000 * 60 * 60 * 24)
-    const remaining = (end - now) / (1000 * 60 * 60 * 24)
-    return Math.round(((total - remaining) / total) * 100)
 }
 </script>

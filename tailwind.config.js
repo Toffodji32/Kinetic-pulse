@@ -5,6 +5,11 @@ export default {
   theme: {
     extend: {
       colors: {
+
+        // ===================================================
+        // THÈME GYM — dark theme (préfixe: gym-)
+        // Utilisé dans Login.vue, Register.vue, HomeView.vue
+        // ===================================================
         'gym-primary': '#69daff',
         'gym-primary-dim': '#00c0ea',
         'gym-primary-fixed': '#00cffc',
@@ -56,6 +61,11 @@ export default {
         'gym-error-container': '#9f0519',
         'gym-on-error': '#490006',
         'gym-on-error-container': '#ffa8a3',
+
+        // ===================================================
+        // THÈME ADMIN — light theme (préfixe: adm-)
+        // Utilisé dans AppLayout.vue, Dashboard.vue, etc.
+        // ===================================================
         'adm-surface-lowest': '#ffffff',
         'adm-surface-low': '#f2f3ff',
         'adm-surface-container': '#eaedff',
@@ -103,18 +113,6 @@ export default {
         'adm-inverse-primary': '#c0c1ff',
         'adm-inverse-on-surface': '#eef0ff',
         'adm-surface-tint': '#494bd6',
-        primary: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-        },
       },
       fontFamily: {
         headline: ['Lexend', 'Manrope', 'sans-serif'],
@@ -125,39 +123,7 @@ export default {
         DEFAULT: '0.25rem',
         lg: '0.5rem',
         xl: '0.75rem',
-        '2xl': '1rem',
-        '3xl': '1.25rem',
         full: '9999px',
-      },
-      animation: {
-        'scan': 'scan 2s ease-in-out infinite',
-        'fade-in': 'fadeIn 0.3s ease-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'slide-down': 'slideDown 0.3s ease-out',
-        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-      },
-      keyframes: {
-        scan: {
-          '0%': { top: '0%' },
-          '50%': { top: '100%' },
-          '100%': { top: '0%' },
-        },
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(16px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideDown: {
-          '0%': { opacity: '0', transform: 'translateY(-16px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        pulseSoft: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.7' },
-        },
       },
     },
   },

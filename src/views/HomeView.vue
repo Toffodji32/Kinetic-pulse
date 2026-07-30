@@ -1,177 +1,108 @@
 <template>
-  <transition name="fade-up" mode="out-in">
-    <div>
-      <section class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="text-center lg:text-left">
-              <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto lg:mx-0 mb-6 shadow-lg">
-                <span class="material-symbols-outlined text-white text-2xl">bolt</span>
-              </div>
-              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-[#131b2e] tracking-tight leading-tight">
-                Gérez votre salle de sport<br/>
-                <span class="text-indigo-600">en toute simplicité</span>
-              </h1>
-              <p class="text-lg text-[#464554] mt-6 max-w-lg mx-auto lg:mx-0">
-                Kinetic Pulse vous offre tous les outils pour gérer vos abonnements, clients, employés et boutique en ligne.
-              </p>
-              <div class="flex flex-col sm:flex-row gap-4 mt-8 justify-center lg:justify-start">
-                <el-button type="primary" size="large" style="height:52px; border-radius:14px; font-weight:700; padding:0 32px;" @click="$router.push('/register-gym')">
-                  Commencer gratuitement
-                </el-button>
-                <el-button size="large" style="height:52px; border-radius:14px; font-weight:700; padding:0 32px;" @click="$router.push('/login')">
-                  Se connecter
-                </el-button>
-              </div>
-            </div>
-            <div class="hidden lg:block">
-              <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-                <div class="grid grid-cols-2 gap-4">
-                  <div v-for="i in 4" :key="i" class="bg-indigo-50 rounded-2xl p-4">
-                    <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                      <span class="material-symbols-outlined text-indigo-600">dashboard</span>
-                    </div>
-                    <p class="font-bold text-sm text-[#131b2e]">Statistiques</p>
-                    <p class="text-xs text-[#464554] mt-1">En temps réel</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <div class="min-h-screen bg-[#0a0a0f] text-white">
+    <NavBar />
+    <HeaderHero />
+    <Features />
 
-      <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-black text-[#131b2e] tracking-tight">Tout ce dont vous avez besoin</h2>
-            <p class="text-[#464554] mt-4 max-w-2xl mx-auto text-lg">Une plateforme complète pour gérer votre salle de sport de A à Z</p>
-          </div>
-          <div class="grid md:grid-cols-3 gap-8">
-            <div v-for="feature in features" :key="feature.title" class="bg-[#faf8ff] rounded-3xl p-8 border border-gray-100 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-              <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6">
-                <span class="material-symbols-outlined text-indigo-600 text-2xl">{{ feature.icon }}</span>
-              </div>
-              <h3 class="text-xl font-bold text-[#131b2e] mb-3">{{ feature.title }}</h3>
-              <p class="text-[#464554] leading-relaxed">{{ feature.desc }}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="py-20 bg-[#faf8ff]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-black text-[#131b2e] tracking-tight">Des offres adaptées à votre structure</h2>
-            <p class="text-[#464554] mt-4 max-w-2xl mx-auto text-lg">Choisissez le plan qui correspond à vos besoins</p>
-          </div>
-          <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div v-for="(plan, idx) in plans" :key="plan.name" class="bg-white rounded-3xl p-8 border-2 flex flex-col relative transition-all duration-200 hover:shadow-lg"
-              :class="plan.recommended ? 'border-indigo-600 shadow-xl scale-[1.02] md:scale-105' : 'border-gray-100'">
-              <div v-if="plan.recommended" class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-full">
-                Recommandé
-              </div>
-              <div class="mb-6">
-                <span class="material-symbols-outlined text-indigo-600 text-3xl mb-4 block">{{ plan.icon }}</span>
-                <h3 class="text-2xl font-bold text-[#131b2e]">{{ plan.name }}</h3>
-                <div class="mt-4 flex items-baseline gap-1">
-                  <span class="text-4xl font-black text-[#131b2e]">{{ plan.price }}</span>
-                  <span class="text-[#464554] text-sm">/mois</span>
-                </div>
-              </div>
-              <ul class="space-y-3 mb-8 flex-1">
-                <li v-for="feature in plan.features" :key="feature" class="flex items-start gap-3 text-sm text-[#464554]">
-                  <span class="material-symbols-outlined text-indigo-600 text-lg flex-shrink-0">check</span>
-                  {{ feature }}
-                </li>
-              </ul>
-              <el-button :type="plan.recommended ? 'primary' : 'default'" size="large" class="w-full" style="height:48px; border-radius:12px; font-weight:700;" @click="$router.push('/register-gym')">
-                {{ plan.cta }}
-              </el-button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="py-24 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#131b2e] tracking-tight mb-6">
-            Prêt à transformer votre gestion ?
+    <!-- Section Promo -->
+    <section class="py-24 bg-[#050508]">
+      <div class="container mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-20">
+          <span class="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3 block">
+            Lancez-vous en 4 étapes
+          </span>
+          <h2 class="font-headline text-4xl font-bold mb-4 text-white">
+            De l'inscription à la première vente — <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">simple et rapide.</span>
           </h2>
-          <p class="text-lg text-[#464554] max-w-2xl mx-auto mb-10">
-            Rejoignez des centaines de salles de sport qui nous font confiance. Essayez gratuitement pendant 14 jours.
-          </p>
-          <el-button type="primary" size="large" style="height:56px; border-radius:14px; font-weight:700; padding:0 40px; font-size:1.125rem;" @click="$router.push('/register-gym')">
-            Essayer gratuitement
-          </el-button>
+          <div class="h-1 w-20 bg-indigo-600 mx-auto rounded-full mt-6"></div>
         </div>
-      </section>
-    </div>
-  </transition>
+
+        <div class="relative flex flex-col md:flex-row justify-between items-start gap-8">
+          <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-white/5 z-0"></div>
+
+          <div v-for="(step, i) in steps" :key="step.title"
+            class="relative z-10 flex-1 flex flex-col items-center text-center group">
+            <div
+              class="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-all duration-500">
+              <span class="text-2xl font-black text-indigo-400 group-hover:text-white transition-colors">{{ i + 1 }}</span>
+            </div>
+            <h4 class="font-headline text-lg font-bold mb-2 text-white">{{ step.title }}</h4>
+            <p class="text-sm text-zinc-500 max-w-[180px]">{{ step.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Pricing />
+    <Shop />
+
+    <!-- CTA Final -->
+    <section class="py-32 bg-[#0a0a0f] relative overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <img class="w-full h-full object-cover opacity-10"
+          src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-[#0a0a0f]"></div>
+      </div>
+
+      <div class="container mx-auto px-6 relative z-10 text-center">
+        <h2 class="font-headline text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tighter text-white">
+          Prêt à digitaliser<br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"
+            style="text-shadow: 0 0 40px rgba(99,102,241,0.3);">
+            votre salle ?
+          </span>
+        </h2>
+        <p class="text-zinc-400 text-xl max-w-2xl mx-auto mb-12">
+          Créez votre salle de sport en 2 minutes. QR codes, abonnements, boutique en ligne — on s'occupe de tout. 
+          Essayez gratuitement pendant 7 jours, sans carte bancaire.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <router-link to="/register-gym">
+            <button class="px-12 py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-full text-xl shadow-[0_0_50px_-10px_rgba(99,102,241,0.5)] hover:scale-105 active:scale-95 transition-all">
+              Créer votre salle de gym
+            </button>
+          </router-link>
+          <button @click="scrollTo('features')"
+            class="px-12 py-5 border border-white/10 text-white font-black rounded-full text-xl hover:bg-white/5 transition-all">
+            En savoir plus
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+  </div>
 </template>
 
 <script setup>
-const features = [
-  {
-    icon: 'subscriptions',
-    title: 'Abonnements',
-    desc: 'Gérez les abonnements de vos membres, suivez les échéances et automatisez les relances en un clic.',
-  },
-  {
-    icon: 'store',
-    title: 'Boutique en ligne',
-    desc: 'Vendez vos produits et services directement depuis votre boutique intégrée. Paiements sécurisés.',
-  },
-  {
-    icon: 'qr_code_scanner',
-    title: 'Scan QR Code',
-    desc: 'Chaque membre reçoit un QR code unique. Scannez à l\'entrée pour un accès rapide et sécurisé.',
-  },
-]
+import Footer      from '../components/Footer.vue'
+import HeaderHero  from '../components/HeaderHero.vue'
+import NavBar      from '../components/NavBar.vue'
+import Pricing     from '../components/Pricing.vue'
+import Shop        from '../components/Shop.vue'
+import Features    from '../components/Features.vue'
 
-const plans = [
+function scrollTo(id) {
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const steps = [
   {
-    name: 'Gratuit',
-    price: '0 €',
-    icon: 'rocket_launch',
-    cta: 'Commencer',
-    recommended: false,
-    features: [
-      'Jusqu\'à 30 membres',
-      'Gestion des abonnements',
-      'Scan QR code',
-      '1 administrateur',
-    ],
+    title: 'Créez votre salle',
+    desc: 'Inscrivez-vous, renseignez les infos de votre salle et commencez l\'essai gratuit.',
   },
   {
-    name: 'Pro',
-    price: '29 €',
-    icon: 'stars',
-    cta: 'Essayer Pro',
-    recommended: true,
-    features: [
-      'Membres illimités',
-      'Boutique en ligne',
-      'Paiements en ligne',
-      'Employés illimités',
-      'Statistiques avancées',
-      'Support prioritaire',
-    ],
+    title: 'Configurez vos offres',
+    desc: 'Définissez vos abonnements, ajoutez des produits et personnalisez votre boutique.',
   },
   {
-    name: 'Premium',
-    price: '79 €',
-    icon: 'workspace_premium',
-    cta: 'Essayer Premium',
-    recommended: false,
-    features: [
-      'Tout le plan Pro',
-      'API personnalisée',
-      'Marque blanche',
-      'SLA 99.9%',
-      'Compte dédié',
-      'Formation offerte',
-    ],
+    title: 'Vos membres scannent',
+    desc: 'Chaque membre reçoit un QR code. Scannez à l\'entrée — accès instantané.',
+  },
+  {
+    title: 'Gagnez du temps',
+    desc: 'Dashboard, ventes, stock : tout est centralisé. Concentrez-vous sur votre activité.',
   },
 ]
 </script>

@@ -1,381 +1,335 @@
 <template>
-  <div class="bg-[#faf8ff] min-h-screen p-4 sm:p-6">
+    <div class="bg-[#faf8ff] min-h-screen p-6">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6 sm:mb-8">
-      <div>
-        <h2 class="text-2xl sm:text-3xl font-black font-headline tracking-tight text-indigo-600">Clients</h2>
-        <p class="text-[#464554] font-medium text-sm sm:text-base">Gestion de tous les membres de la salle</p>
-      </div>
-      <el-button type="primary" size="large" @click="showCreateModal = true" class="hidden sm:inline-flex"
-        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700; padding: 12px 20px;">
-        <span class="material-symbols-outlined text-lg mr-1">person_add</span>
-        Nouveau client
-      </el-button>
-    </div>
-
-    <!-- Barre de recherche -->
-    <div class="bg-white rounded-2xl p-3 sm:p-4 shadow-sm mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
-      <el-input v-model="search" placeholder="Rechercher par nom, email..." size="large" clearable style="max-width: 100%; width: 100%; sm:max-width: 400px; sm:width: auto;">
-        <template #prefix><span class="material-symbols-outlined text-lg text-[#464554]">search</span></template>
-      </el-input>
-      <span class="text-[#464554] text-sm font-medium sm:ml-auto">{{ filteredClients.length }} client(s) trouvé(s)</span>
-    </div>
-
-    <!-- Loading -->
-    <div v-if="clientStore.loading" class="space-y-4">
-      <div v-for="i in 5" :key="i" class="bg-white rounded-2xl p-4 shadow-sm animate-pulse flex items-center gap-3">
-        <div class="w-10 h-10 bg-gray-100 rounded-full"></div>
-        <div class="flex-1">
-          <div class="h-4 bg-gray-100 rounded w-32 mb-2"></div>
-          <div class="h-3 bg-gray-100 rounded w-48"></div>
+        <!-- Header -->
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-black font-headline tracking-tight text-indigo-600">Clients</h2>
+                <p class="text-[#464554] font-medium">Gestion de tous les membres de la salle</p>
+            </div>
+            <el-button type="primary" size="large" @click="showCreateModal = true"
+                style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;">
+                <el-icon class="mr-2">
+                    <Plus />
+                </el-icon>
+                Nouveau client
+            </el-button>
         </div>
-      </div>
-    </div>
 
-    <template v-else>
-
-      <!-- Mobile cards -->
-      <div class="sm:hidden space-y-3 mb-6">
-        <div v-for="client in paginatedClients" :key="client.id" @click="openDetail(client.id)"
-          class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3 active:scale-[0.98] transition-transform cursor-pointer">
-          <div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0" :style="{ backgroundColor: getAvatarColor(client.firstName) }">
-            {{ client.firstName?.charAt(0) }}{{ client.lastName?.charAt(0) }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-bold text-[#131b2e] text-sm truncate">{{ client.firstName }} {{ client.lastName }}</p>
-            <p class="text-xs text-[#464554] truncate">{{ client.email }}</p>
-          </div>
-          <span class="material-symbols-outlined text-[#464554]">chevron_right</span>
+        <!-- Barre de recherche -->
+        <div class="bg-white rounded-xl p-4 shadow-sm mb-6 flex gap-4 items-center">
+            <el-input v-model="search" placeholder="Rechercher par nom, email..." size="large" clearable
+                style="max-width: 400px;">
+                <template #prefix>
+                    <el-icon>
+                        <Search />
+                    </el-icon>
+                </template>
+            </el-input>
+            <span class="text-[#464554] text-sm font-medium ml-auto">
+                {{ filteredClients.length }} client(s) trouvé(s)
+            </span>
         </div>
-        <!-- Empty mobile -->
-        <div v-if="paginatedClients.length === 0" class="flex flex-col items-center py-12">
-          <span class="material-symbols-outlined text-5xl text-gray-200 mb-3">people</span>
-          <p class="text-[#464554] font-medium mb-3">Aucun client trouvé</p>
-          <el-button type="primary" @click="showCreateModal = true"
-            style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700; padding: 12px 20px;">
-            <span class="material-symbols-outlined text-lg mr-1">person_add</span>
-            Nouveau client
-          </el-button>
-        </div>
-      </div>
 
-      <!-- Desktop table -->
-      <div class="hidden sm:block bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-        <el-table :data="paginatedClients" style="width: 100%" row-class-name="hover:bg-indigo-50/30" empty-text="Aucun client trouvé">
-          <el-table-column label="Client" min-width="220">
-            <template #default="{ row }">
-              <div class="flex items-center gap-3 py-2">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0" :style="{ backgroundColor: getAvatarColor(row.firstName) }">
-                  {{ row.firstName?.charAt(0) }}{{ row.lastName?.charAt(0) }}
+        <!-- Loading -->
+        <div v-if="clientStore.loading" class="flex justify-center items-center py-20">
+            <el-icon class="animate-spin text-indigo-600 text-4xl">
+                <Loading />
+            </el-icon>
+        </div>
+
+        <!-- Tableau -->
+        <div v-else class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <el-table :data="paginatedClients" style="width: 100%" row-class-name="hover:bg-indigo-50/30"
+                empty-text="Aucun client trouvé">
+                <!-- Photo -->
+                <el-table-column label="Client" min-width="220">
+                    <template #default="{ row }">
+                        <div class="flex items-center gap-3 py-2">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0"
+                                :style="{ backgroundColor: getAvatarColor(row.firstName) }">
+                                {{ row.firstName?.charAt(0) }}{{ row.lastName?.charAt(0) }}
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#131b2e]">{{ row.firstName }} {{ row.lastName }}</p>
+                                <p class="text-xs text-[#464554]">{{ row.email }}</p>
+                            </div>
+                        </div>
+                    </template>
+                </el-table-column>
+
+                <!-- Téléphone -->
+                <el-table-column label="Téléphone" prop="phone" min-width="140">
+                    <template #default="{ row }">
+                        <span class="text-[#464554]">{{ row.phone || '—' }}</span>
+                    </template>
+                </el-table-column>
+
+                <!-- Date inscription -->
+                <el-table-column label="Inscrit le" min-width="130">
+                    <template #default="{ row }">
+                        <span class="text-[#464554] text-sm">{{ formatDate(row.registrationDate) }}</span>
+                    </template>
+                </el-table-column>
+
+                <!-- QR Code -->
+                <el-table-column label="QR Code" min-width="100" align="center">
+                    <template #default="{ row }">
+                        <el-tag v-if="row.qrCode" type="success" size="small" round>Généré</el-tag>
+                        <el-tag v-else type="info" size="small" round>—</el-tag>
+                    </template>
+                </el-table-column>
+
+                <!-- Actions -->
+                <el-table-column label="Actions" min-width="160" align="center">
+                    <template #default="{ row }">
+                        <div class="flex gap-2 justify-center">
+                            <el-button size="small" @click="openDetail(row.id)"
+                                style="background-color: #e0e7ff; color: #4f46e5; border: none; border-radius: 8px; font-weight: 600;">
+                                <el-icon class="mr-1">
+                                    <View />
+                                </el-icon>
+                                Voir
+                            </el-button>
+                            <el-button size="small" type="danger" plain @click="handleDelete(row)"
+                                style="border-radius: 8px;">
+                                <el-icon>
+                                    <Delete />
+                                </el-icon>
+                            </el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center">
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
+                :total="filteredClients.length" layout="total, sizes, prev, pager, next" background />
+        </div>
+
+        <!-- ═══════════════════════════════════════
+         MODAL CRÉATION CLIENT
+    ═══════════════════════════════════════ -->
+        <el-dialog v-model="showCreateModal" title="Nouveau client" width="520px" border-radius="16px"
+            :close-on-click-modal="false" @closed="resetForm">
+            <el-form ref="createFormRef" :model="form" :rules="rules" label-position="top" size="large">
+                <div class="grid grid-cols-2 gap-4">
+                    <el-form-item label="Prénom" prop="firstName">
+                        <el-input v-model="form.firstName" placeholder="Jean" />
+                    </el-form-item>
+                    <el-form-item label="Nom" prop="lastName">
+                        <el-input v-model="form.lastName" placeholder="Dupont" />
+                    </el-form-item>
                 </div>
-                <div>
-                  <p class="font-bold text-[#131b2e]">{{ row.firstName }} {{ row.lastName }}</p>
-                  <p class="text-xs text-[#464554]">{{ row.email }}</p>
+
+                <el-form-item label="Email" prop="email">
+                    <el-input v-model="form.email" type="email" placeholder="jean@email.com">
+                        <template #prefix><el-icon>
+                                <Message />
+                            </el-icon></template>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item label="Téléphone" prop="phone">
+                    <el-input v-model="form.phone" placeholder="+229 00 00 00 00">
+                        <template #prefix><el-icon>
+                                <Phone />
+                            </el-icon></template>
+                    </el-input>
+                </el-form-item>
+
+                <!-- Upload photo -->
+                <el-form-item label="Photo (optionnel)">
+                    <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handlePhotoChange"
+                        :show-file-list="false" accept="image/*">
+                        <el-button plain style="width: 100%; border-radius: 8px;">
+                            <el-icon class="mr-2">
+                                <Upload />
+                            </el-icon>
+                            {{ form.photo ? form.photo.name : 'Choisir une photo' }}
+                        </el-button>
+                    </el-upload>
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <div class="flex gap-3 justify-end">
+                    <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px;">
+                        Annuler
+                    </el-button>
+                    <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleCreate"
+                        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700;">
+                        Créer le client
+                    </el-button>
                 </div>
-              </div>
             </template>
-          </el-table-column>
-          <el-table-column label="Téléphone" prop="phone" min-width="140">
-            <template #default="{ row }">
-              <span class="text-[#464554]">{{ row.phone || '—' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Inscrit le" min-width="130">
-            <template #default="{ row }">
-              <span class="text-[#464554] text-sm">{{ formatDate(row.registrationDate) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="QR Code" min-width="100" align="center">
-            <template #default="{ row }">
-              <el-tag v-if="row.qrCode" type="success" size="small" round>Généré</el-tag>
-              <el-tag v-else type="info" size="small" round>—</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" min-width="160" align="center">
-            <template #default="{ row }">
-              <div class="flex gap-2 justify-center">
-                <el-button size="small" @click="openDetail(row.id)" style="background-color: #e0e7ff; color: #4f46e5; border: none; border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 44px;">
-                  <span class="material-symbols-outlined text-sm mr-1">visibility</span>
-                  Voir
-                </el-button>
-                <el-button size="small" type="danger" plain @click="handleDelete(row)" style="border-radius: 8px; min-height: 36px; min-width: 44px;">
-                  <span class="material-symbols-outlined text-sm">delete</span>
-                </el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+        </el-dialog>
 
-    </template>
+        <!-- ═══════════════════════════════════════
+     MODAL MODIFICATION CLIENT
+═══════════════════════════════════════ -->
+        <el-dialog v-model="showEditModal" title="Modifier le client" width="520px" :close-on-click-modal="false"
+            @closed="resetEditForm">
+            <el-form ref="editFormRef" :model="editForm" :rules="rules" label-position="top" size="large">
+                <div class="grid grid-cols-2 gap-4">
+                    <el-form-item label="Prénom" prop="firstName">
+                        <el-input v-model="editForm.firstName" placeholder="Jean" />
+                    </el-form-item>
+                    <el-form-item label="Nom" prop="lastName">
+                        <el-input v-model="editForm.lastName" placeholder="Dupont" />
+                    </el-form-item>
+                </div>
 
-    <!-- Pagination -->
-    <div class="flex justify-center">
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
-        :total="filteredClients.length" layout="total, sizes, prev, pager, next" background />
-    </div>
+                <el-form-item label="Email" prop="email">
+                    <el-input v-model="editForm.email" type="email" placeholder="jean@email.com">
+                        <template #prefix><el-icon>
+                                <Message />
+                            </el-icon></template>
+                    </el-input>
+                </el-form-item>
 
-    <!-- Mobile FAB -->
-    <button @click="showCreateModal = true"
-      class="sm:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-50">
-      <span class="material-symbols-outlined text-2xl">add</span>
-    </button>
+                <el-form-item label="Téléphone" prop="phone">
+                    <el-input v-model="editForm.phone" placeholder="+229 00 00 00 00">
+                        <template #prefix><el-icon>
+                                <Phone />
+                            </el-icon></template>
+                    </el-input>
+                </el-form-item>
 
-    <!-- ═══════════════════════════════════════
-         MODAL CRÉATION CLIENT (responsive)
+                <!-- Nouvelle photo -->
+                <el-form-item label="Changer la photo (optionnel)">
+                    <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handleEditPhotoChange"
+                        :show-file-list="false" accept="image/*">
+                        <el-button plain style="width: 100%; border-radius: 8px;">
+                            <el-icon class="mr-2">
+                                <Upload />
+                            </el-icon>
+                            {{ editForm.photo ? editForm.photo.name : 'Choisir une nouvelle photo' }}
+                        </el-button>
+                    </el-upload>
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <div class="flex gap-3 justify-end">
+                    <el-button @click="showEditModal = false" size="large" style="border-radius: 10px;">
+                        Annuler
+                    </el-button>
+                    <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleEdit"
+                        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700;">
+                        Enregistrer
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- ═══════════════════════════════════════
+        DRAWER DÉTAIL CLIENT
     ═══════════════════════════════════════ -->
-    <!-- Mobile drawer -->
-    <div class="sm:hidden">
-      <el-drawer v-model="showCreateModal" direction="btt" size="90%" :close-on-click-modal="false" @closed="resetForm" title="Nouveau client">
-        <template #default>
-          <el-form ref="createFormRef" :model="form" :rules="rules" label-position="top" size="large" class="px-2">
-            <div class="grid grid-cols-2 gap-3">
-              <el-form-item label="Prénom" prop="firstName">
-                <el-input v-model="form.firstName" placeholder="Jean" style="border-radius: 10px;" />
-              </el-form-item>
-              <el-form-item label="Nom" prop="lastName">
-                <el-input v-model="form.lastName" placeholder="Dupont" style="border-radius: 10px;" />
-              </el-form-item>
+        <el-drawer v-model="showDetail" direction="rtl" size="480px" :with-header="false">
+            <div v-if="detailLoading" class="flex justify-center items-center h-full">
+                <el-icon class="animate-spin text-indigo-600 text-4xl">
+                    <Loading />
+                </el-icon>
             </div>
-            <el-form-item label="Email" prop="email">
-              <el-input v-model="form.email" type="email" placeholder="jean@email.com" style="border-radius: 10px;">
-                <template #prefix><span class="material-symbols-outlined text-lg">mail</span></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="Téléphone" prop="phone">
-              <el-input v-model="form.phone" placeholder="+229 00 00 00 00" style="border-radius: 10px;">
-                <template #prefix><span class="material-symbols-outlined text-lg">phone</span></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="Photo (optionnel)">
-              <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handlePhotoChange" :show-file-list="false" accept="image/*">
-                <el-button plain style="width: 100%; border-radius: 10px; min-height: 44px;">
-                  <span class="material-symbols-outlined text-lg mr-1">upload</span>
-                  {{ form.photo ? form.photo.name : 'Choisir une photo' }}
+
+            <div v-else-if="selectedClient" class="p-6 h-full overflow-y-auto">
+
+                <!-- Avatar + nom -->
+                <div class="flex flex-col items-center mb-8 pt-4">
+                    <div v-if="!selectedClient.photo"
+                        class="w-24 h-24 rounded-full flex items-center justify-center font-black text-3xl text-white mb-4"
+                        :style="{ backgroundColor: getAvatarColor(selectedClient.firstName) }">
+                        {{ selectedClient.firstName?.charAt(0) }}{{ selectedClient.lastName?.charAt(0) }}
+                    </div>
+                    <img v-else :src="mediaUrl(selectedClient.photo)"
+                        class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-indigo-100" />
+                    <h2 class="text-2xl font-black text-[#131b2e]">
+                        {{ selectedClient.firstName }} {{ selectedClient.lastName }}
+                    </h2>
+                    <p class="text-[#464554]">{{ selectedClient.email }}</p>
+                </div>
+
+                <!-- Infos -->
+                <div class="space-y-4 mb-8">
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Téléphone</span>
+                        <span class="font-bold text-[#131b2e]">{{ selectedClient.phone || '—' }}</span>
+                    </div>
+                    <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Inscrit le</span>
+                        <span class="font-bold text-[#131b2e]">{{ formatDate(selectedClient.registrationDate) }}</span>
+                    </div>
+                </div>
+
+                <!-- Abonnement -->
+                <div class="mb-8">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">Abonnement</h3>
+                    <div v-if="selectedClient.subscription"
+                        class="bg-white border border-indigo-100 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="font-black text-[#131b2e] text-lg">{{ selectedClient.subscription.type
+                                }}</span>
+                            <el-tag :type="selectedClient.subscription.status === 'Actif' ? 'success' : 'danger'"
+                                size="large" round>
+                                {{ selectedClient.subscription.status }}
+                            </el-tag>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <p class="text-[#464554] text-xs">Début</p>
+                                <p class="font-bold">{{ selectedClient.subscription.startDate }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[#464554] text-xs">Fin</p>
+                                <p class="font-bold">{{ selectedClient.subscription.endDate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="bg-[#f2f3ff] rounded-xl p-4 text-center">
+                        <p class="text-[#464554] text-sm font-medium">Aucun abonnement actif</p>
+                        <el-button type="primary" size="small" class="mt-2"
+                            style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 8px;">
+                            + Ajouter un abonnement
+                        </el-button>
+                    </div>
+                </div>
+
+                <!-- QR Code -->
+                <div v-if="selectedClient.qrCode" class="mb-8">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">QR Code</h3>
+                    <div class="bg-white border border-indigo-100 rounded-xl p-4 flex flex-col items-center shadow-sm">
+                        <img :src="mediaUrl(selectedClient.qrCode)"
+                            class="w-40 h-40 object-contain" alt="QR Code" />
+                        <p class="text-xs text-[#464554] mt-2">Scanner pour valider l'accès</p>
+                    </div>
+                </div>
+
+                <!-- Bouton modifier -->
+                <el-button type="primary" size="large" class="w-full mb-3"
+                    style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;"
+                    @click="openEditModal">
+                    <el-icon class="mr-2">
+                        <Edit />
+                    </el-icon>
+                    Modifier ce client
                 </el-button>
-              </el-upload>
-            </el-form-item>
-          </el-form>
-        </template>
-        <template #footer>
-          <div class="flex gap-3">
-            <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px; flex: 1; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleCreate"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; flex: 1; min-height: 44px;">
-              Créer
-            </el-button>
-          </div>
-        </template>
-      </el-drawer>
-    </div>
-    <!-- Desktop dialog -->
-    <div class="hidden sm:block">
-      <el-dialog v-model="showCreateModal" title="Nouveau client" width="520px" border-radius="16px" :close-on-click-modal="false" @closed="resetForm">
-        <el-form ref="createFormRef" :model="form" :rules="rules" label-position="top" size="large">
-          <div class="grid grid-cols-2 gap-4">
-            <el-form-item label="Prénom" prop="firstName">
-              <el-input v-model="form.firstName" placeholder="Jean" style="border-radius: 10px;" />
-            </el-form-item>
-            <el-form-item label="Nom" prop="lastName">
-              <el-input v-model="form.lastName" placeholder="Dupont" style="border-radius: 10px;" />
-            </el-form-item>
-          </div>
-          <el-form-item label="Email" prop="email">
-            <el-input v-model="form.email" type="email" placeholder="jean@email.com" style="border-radius: 10px;">
-              <template #prefix><span class="material-symbols-outlined text-lg">mail</span></template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="Téléphone" prop="phone">
-            <el-input v-model="form.phone" placeholder="+229 00 00 00 00" style="border-radius: 10px;">
-              <template #prefix><span class="material-symbols-outlined text-lg">phone</span></template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="Photo (optionnel)">
-            <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handlePhotoChange" :show-file-list="false" accept="image/*">
-              <el-button plain style="width: 100%; border-radius: 10px; min-height: 44px;">
-                <span class="material-symbols-outlined text-lg mr-1">upload</span>
-                {{ form.photo ? form.photo.name : 'Choisir une photo' }}
-              </el-button>
-            </el-upload>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="flex gap-3 justify-end">
-            <el-button @click="showCreateModal = false" size="large" style="border-radius: 10px; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleCreate"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; min-height: 44px;">
-              Créer le client
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
 
-    <!-- ═══════════════════════════════════════
-         MODAL MODIFICATION CLIENT (responsive)
-    ═══════════════════════════════════════ -->
-    <!-- Mobile drawer -->
-    <div class="sm:hidden">
-      <el-drawer v-model="showEditModal" direction="btt" size="90%" :close-on-click-modal="false" @closed="resetEditForm" title="Modifier le client">
-        <template #default>
-          <el-form ref="editFormRef" :model="editForm" :rules="rules" label-position="top" size="large" class="px-2">
-            <div class="grid grid-cols-2 gap-3">
-              <el-form-item label="Prénom" prop="firstName">
-                <el-input v-model="editForm.firstName" placeholder="Jean" style="border-radius: 10px;" />
-              </el-form-item>
-              <el-form-item label="Nom" prop="lastName">
-                <el-input v-model="editForm.lastName" placeholder="Dupont" style="border-radius: 10px;" />
-              </el-form-item>
-            </div>
-            <el-form-item label="Email" prop="email">
-              <el-input v-model="editForm.email" type="email" placeholder="jean@email.com" style="border-radius: 10px;">
-                <template #prefix><span class="material-symbols-outlined text-lg">mail</span></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="Téléphone" prop="phone">
-              <el-input v-model="editForm.phone" placeholder="+229 00 00 00 00" style="border-radius: 10px;">
-                <template #prefix><span class="material-symbols-outlined text-lg">phone</span></template>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="Changer la photo (optionnel)">
-              <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handleEditPhotoChange" :show-file-list="false" accept="image/*">
-                <el-button plain style="width: 100%; border-radius: 10px; min-height: 44px;">
-                  <span class="material-symbols-outlined text-lg mr-1">upload</span>
-                  {{ editForm.photo ? editForm.photo.name : 'Choisir une nouvelle photo' }}
+                <!-- Bouton supprimer -->
+                <el-button type="danger" size="large" class="w-full" plain
+                    style="border-radius: 12px; font-weight: 700;" @click="handleDelete(selectedClient)">
+                    <el-icon class="mr-2">
+                        <Delete />
+                    </el-icon>
+                    Supprimer ce client
                 </el-button>
-              </el-upload>
-            </el-form-item>
-          </el-form>
-        </template>
-        <template #footer>
-          <div class="flex gap-3">
-            <el-button @click="showEditModal = false" size="large" style="border-radius: 10px; flex: 1; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleEdit"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; flex: 1; min-height: 44px;">
-              Enregistrer
-            </el-button>
-          </div>
-        </template>
-      </el-drawer>
-    </div>
-    <!-- Desktop dialog -->
-    <div class="hidden sm:block">
-      <el-dialog v-model="showEditModal" title="Modifier le client" width="520px" :close-on-click-modal="false" @closed="resetEditForm">
-        <el-form ref="editFormRef" :model="editForm" :rules="rules" label-position="top" size="large">
-          <div class="grid grid-cols-2 gap-4">
-            <el-form-item label="Prénom" prop="firstName">
-              <el-input v-model="editForm.firstName" placeholder="Jean" style="border-radius: 10px;" />
-            </el-form-item>
-            <el-form-item label="Nom" prop="lastName">
-              <el-input v-model="editForm.lastName" placeholder="Dupont" style="border-radius: 10px;" />
-            </el-form-item>
-          </div>
-          <el-form-item label="Email" prop="email">
-            <el-input v-model="editForm.email" type="email" placeholder="jean@email.com" style="border-radius: 10px;">
-              <template #prefix><span class="material-symbols-outlined text-lg">mail</span></template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="Téléphone" prop="phone">
-            <el-input v-model="editForm.phone" placeholder="+229 00 00 00 00" style="border-radius: 10px;">
-              <template #prefix><span class="material-symbols-outlined text-lg">phone</span></template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="Changer la photo (optionnel)">
-            <el-upload class="w-full" action="#" :auto-upload="false" :on-change="handleEditPhotoChange" :show-file-list="false" accept="image/*">
-              <el-button plain style="width: 100%; border-radius: 10px; min-height: 44px;">
-                <span class="material-symbols-outlined text-lg mr-1">upload</span>
-                {{ editForm.photo ? editForm.photo.name : 'Choisir une nouvelle photo' }}
-              </el-button>
-            </el-upload>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="flex gap-3 justify-end">
-            <el-button @click="showEditModal = false" size="large" style="border-radius: 10px; min-height: 44px;">Annuler</el-button>
-            <el-button type="primary" size="large" :loading="clientStore.loading" @click="handleEdit"
-              style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 10px; font-weight: 700; min-height: 44px;">
-              Enregistrer
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
 
-    <!-- ═══════════════════════════════════════
-         DRAWER DÉTAIL CLIENT
-    ═══════════════════════════════════════ -->
-    <el-drawer v-model="showDetail" direction="rtl" size="480px" :with-header="false" class="!w-full sm:!w-[480px]">
-      <div v-if="detailLoading" class="flex justify-center items-center h-full">
-        <span class="material-symbols-outlined animate-spin text-indigo-600 text-4xl">progress_activity</span>
-      </div>
-      <div v-else-if="selectedClient" class="p-4 sm:p-6 h-full overflow-y-auto">
-        <div class="flex flex-col items-center mb-8 pt-4">
-          <div v-if="!selectedClient.photo"
-            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center font-black text-2xl sm:text-3xl text-white mb-4"
-            :style="{ backgroundColor: getAvatarColor(selectedClient.firstName) }">
-            {{ selectedClient.firstName?.charAt(0) }}{{ selectedClient.lastName?.charAt(0) }}
-          </div>
-          <img v-else :src="mediaUrl(selectedClient.photo)" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mb-4 border-4 border-indigo-100" />
-          <h2 class="text-xl sm:text-2xl font-black text-[#131b2e]">{{ selectedClient.firstName }} {{ selectedClient.lastName }}</h2>
-          <p class="text-[#464554] text-sm">{{ selectedClient.email }}</p>
-        </div>
-        <div class="space-y-4 mb-8">
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Téléphone</span>
-            <span class="font-bold text-[#131b2e]">{{ selectedClient.phone || '—' }}</span>
-          </div>
-          <div class="bg-[#f2f3ff] rounded-xl p-4 flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-[#464554]">Inscrit le</span>
-            <span class="font-bold text-[#131b2e]">{{ formatDate(selectedClient.registrationDate) }}</span>
-          </div>
-        </div>
-        <div class="mb-8">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">Abonnement</h3>
-          <div v-if="selectedClient.subscription" class="bg-white border border-indigo-100 rounded-xl p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-3">
-              <span class="font-black text-[#131b2e] text-base sm:text-lg">{{ selectedClient.subscription.type }}</span>
-              <el-tag :type="selectedClient.subscription.status === 'Actif' ? 'success' : 'danger'" size="large" round>
-                {{ selectedClient.subscription.status }}
-              </el-tag>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p class="text-[#464554] text-xs">Début</p>
-                <p class="font-bold">{{ selectedClient.subscription.startDate }}</p>
-              </div>
-              <div>
-                <p class="text-[#464554] text-xs">Fin</p>
-                <p class="font-bold">{{ selectedClient.subscription.endDate }}</p>
-              </div>
-            </div>
-          </div>
-          <div v-else class="bg-[#f2f3ff] rounded-xl p-4 text-center">
-            <p class="text-[#464554] text-sm font-medium">Aucun abonnement actif</p>
-          </div>
-        </div>
-        <div v-if="selectedClient.qrCode" class="mb-8">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">QR Code</h3>
-          <div class="bg-white border border-indigo-100 rounded-xl p-4 flex flex-col items-center shadow-sm">
-            <img :src="mediaUrl(selectedClient.qrCode)" class="w-36 h-36 sm:w-40 sm:h-40 object-contain" alt="QR Code" />
-            <p class="text-xs text-[#464554] mt-2">Scanner pour valider l'accès</p>
-          </div>
-        </div>
-        <el-button type="primary" size="large" class="w-full mb-3 min-h-[44px]"
-          style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;"
-          @click="openEditModal">
-          <span class="material-symbols-outlined text-lg mr-1">edit</span>
-          Modifier ce client
-        </el-button>
-        <el-button type="danger" size="large" class="w-full min-h-[44px]" plain
-          style="border-radius: 12px; font-weight: 700;" @click="handleDelete(selectedClient)">
-          <span class="material-symbols-outlined text-lg mr-1">delete</span>
-          Supprimer ce client
-        </el-button>
-      </div>
-    </el-drawer>
+        </el-drawer>
 
-  </div>
+    </div>
 </template>
 
 <script setup>
@@ -501,13 +455,14 @@ async function handleCreate() {
 }
 
 // ── Ouvrir le modal de modification ─────────────
+// pré-remplit le formulaire avec les données du client sélectionné
 function openEditModal() {
     editForm.value = {
         firstName: selectedClient.value.firstName,
         lastName: selectedClient.value.lastName,
         email: selectedClient.value.email,
         phone: selectedClient.value.phone,
-        photo: null,
+        photo: null, // on ne pré-charge pas la photo
     }
     showEditModal.value = true
 }
