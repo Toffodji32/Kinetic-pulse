@@ -1,169 +1,150 @@
 <template>
-    <div class="flex bg-[#faf8ff] min-h-screen">
-        <!-- Mobile overlay -->
-        <div v-if="sidebarOpen" class="fixed inset-0 bg-black/40 z-40 lg:hidden" @click="sidebarOpen = false"></div>
-
-        <!-- SIDEBAR -->
+    <div class="flex h-screen bg-[#faf8ff] overflow-hidden">
+        <!-- DESKTOP SIDEBAR (>= 1024px) -->
         <aside
-            class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-[#f2f3ff] flex flex-col gap-2 p-6 z-50 transition-transform duration-300 lg:translate-x-0"
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Pulse</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Administration</p>
+            v-show="!mobileMenuOpen"
+            class="hidden lg:flex flex-col bg-white border-r border-gray-100 shadow-sm transition-all duration-300 flex-shrink-0 h-screen overflow-hidden"
+            :class="sidebarExpanded ? 'w-[260px]' : 'w-[72px]'"
+            @mouseenter="sidebarExpanded = true"
+            @mouseleave="sidebarExpanded = false"
+        >
+            <!-- Logo -->
+            <div class="flex items-center h-16 px-4 border-b border-gray-100 flex-shrink-0" :class="sidebarExpanded ? 'justify-between' : 'justify-center'">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <span class="material-symbols-outlined text-white text-lg">bolt</span>
+                    </div>
+                    <span v-show="sidebarExpanded" class="font-black text-[#131b2e] text-lg tracking-tight whitespace-nowrap">KINETIC</span>
                 </div>
-                <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:text-slate-800">
-                    <span class="material-symbols-outlined">close</span>
+                <button v-show="sidebarExpanded" @click="sidebarExpanded = false" class="w-6 h-6 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors flex-shrink-0">
+                    <span class="material-symbols-outlined text-gray-500 text-sm">chevron_left</span>
                 </button>
             </div>
 
-            <nav class="flex flex-col gap-1 flex-1">
-                <router-link to="/admin/dashboard"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/dashboard' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span class="text-sm font-medium">Tableau de bord</span>
-                </router-link>
-
-                <router-link to="/admin/clients"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/clients' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">group</span>
-                    <span class="text-sm font-medium">Clients</span>
-                </router-link>
-
-                <router-link to="/admin/subscriptions"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/subscriptions' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">card_membership</span>
-                    <span class="text-sm font-medium">Abonnements</span>
-                </router-link>
-
-                <router-link to="/admin/payments"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/payments' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">payments</span>
-                    <span class="text-sm font-medium">Paiements</span>
-                </router-link>
-
-                <router-link to="/admin/orders"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/orders' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">shopping_bag</span>
-                    <span class="text-sm font-medium">Commandes</span>
-                </router-link>
-
-                <router-link to="/admin/products"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/products' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">inventory_2</span>
-                    <span class="text-sm font-medium">Produits</span>
-                </router-link>
-
-                <router-link to="/admin/users"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/users' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">manage_accounts</span>
-                    <span class="text-sm font-medium">Utilisateurs</span>
-                </router-link>
-
-                <router-link to="/admin/categories"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/categories' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">category</span>
-                    <span class="text-sm font-medium">Catégories</span>
-                </router-link>
-
-                <router-link to="/admin/subscription-types"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/subscription-types' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">style</span>
-                    <span class="text-sm font-medium">Types d'abonnement</span>
-                </router-link>
-
-                <router-link to="/admin/settings"
-                    class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span class="text-sm font-medium">Paramètres</span>
-                </router-link>
-
-                <hr class="my-2 border-slate-200/50">
-
-                <router-link to="/admin/gym/subscription"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/gym/subscription' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">workspace_premium</span>
-                    <span class="text-sm font-medium">Abonnement</span>
-                </router-link>
-
-                <router-link v-if="hasShopFeature && gymAuthStore.gym?.slug" :to="`/shop/${gymAuthStore.gym.slug}`" target="_blank"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/shop' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">storefront</span>
-                    <span class="text-sm font-medium">Boutique</span>
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto px-3 py-4 scrollbar-hide space-y-1">
+                <router-link v-for="item in navItems" :key="item.to"
+                    :to="item.to"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group"
+                    :class="isActive(item.to)
+                        ? 'bg-indigo-50 text-indigo-600 font-semibold'
+                        : 'text-[#464554] hover:bg-gray-50 hover:text-[#131b2e]'"
+                >
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
+                        :class="isActive(item.to) ? 'bg-indigo-100 text-indigo-600' : 'text-[#464554] group-hover:bg-gray-100'">
+                        <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
+                    </div>
+                    <span v-show="sidebarExpanded" class="text-sm font-medium whitespace-nowrap">{{ item.label }}</span>
                 </router-link>
             </nav>
 
-            <div class="mt-auto pt-6 border-t border-slate-200/50 flex flex-col gap-1">
-                <router-link to="/admin/gym/info"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 text-slate-500 hover:bg-white/50 mb-2"
-                    @click="sidebarOpen = false">
-                    <div v-if="gymAuthStore.gym?.logo" class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
-                        <img :src="gymAuthStore.gym.logo" class="w-full h-full object-cover" />
-                    </div>
-                    <div v-else
-                        class="w-9 h-9 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm flex-shrink-0">
-                        {{ gymAuthStore.gym?.name?.charAt(0).toUpperCase() || 'G' }}
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-sm font-semibold text-slate-800 truncate">{{ gymAuthStore.gym?.name || 'Ma salle' }}</p>
-                        <p class="text-[10px] uppercase tracking-wider text-slate-400">Gérer la salle</p>
-                    </div>
-                </router-link>
-
-                <button @click="handleLogout"
-                    class="flex items-center gap-3 px-4 py-2 text-red-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200 w-full text-left">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span class="text-sm font-medium">Déconnexion</span>
-                </button>
+            <!-- User bottom -->
+            <div class="border-t border-gray-100 px-3 py-3 flex-shrink-0">
+                <div class="relative">
+                    <button @click="userMenuOpen = !userMenuOpen"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
+                        :class="sidebarExpanded ? '' : 'justify-center'"
+                    >
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 shadow-sm">
+                            {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
+                        </div>
+                        <template v-if="sidebarExpanded">
+                            <div class="flex-1 min-w-0 text-left">
+                                <p class="text-sm font-semibold text-[#131b2e] truncate">{{ authStore.user?.name || 'Admin' }}</p>
+                                <p class="text-[10px] uppercase tracking-wider text-gray-400">Connecté</p>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-400 text-lg">expand_more</span>
+                        </template>
+                    </button>
+                    <transition name="fade">
+                        <div v-if="userMenuOpen"
+                            class="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                            @click="userMenuOpen = false">
+                            <router-link to="/admin/settings" class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#464554] hover:bg-gray-50 hover:text-[#131b2e] transition-colors">
+                                <span class="material-symbols-outlined text-lg">settings</span>
+                                <span>Paramètres</span>
+                            </router-link>
+                            <button @click="handleLogout" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                <span class="material-symbols-outlined text-lg">logout</span>
+                                <span>Déconnexion</span>
+                            </button>
+                        </div>
+                    </transition>
+                </div>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <div class="flex-1 min-h-screen bg-[#faf8ff] text-[#131b2e] lg:ml-64">
-            <!-- TOPBAR -->
-            <header class="sticky top-0 z-30 w-full flex justify-between items-center h-20 px-4 lg:px-8 bg-white/80 backdrop-blur-xl shadow-sm">
-                <button @click="sidebarOpen = true" class="lg:hidden text-slate-600 hover:text-slate-900">
-                    <span class="material-symbols-outlined text-2xl">menu</span>
-                </button>
-
-                <div class="hidden lg:block"></div>
-
-                <div class="flex items-center gap-4 ml-auto">
-                    <router-link to="/admin/wallet"
-                        class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer">
-                        <span class="material-symbols-outlined text-emerald-600 text-xl">account_balance_wallet</span>
-                        <span class="font-bold text-emerald-700 text-sm">{{ walletStore.wallet ? formatWalletAmount(walletStore.wallet.balanceAvailable) : '—' }}</span>
-                    </router-link>
-                    <router-link to="/admin/settings" class="flex items-center gap-3 pl-4 border-l border-slate-200 hover:opacity-80 transition-opacity">
-                        <div class="text-right">
-                            <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
-                            <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté(e)</p>
+        <!-- MOBILE DRAWER (< 1024px) -->
+        <el-drawer v-model="mobileMenuOpen" direction="ltr" size="280px" :with-header="false" :z-index="1000">
+            <div class="flex flex-col h-full p-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
+                            <span class="material-symbols-outlined text-white text-lg">bolt</span>
                         </div>
-                        <div
-                            class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
+                        <span class="font-black text-[#131b2e] text-lg tracking-tight">KINETIC</span>
+                    </div>
+                    <button @click="mobileMenuOpen = false" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200">
+                        <span class="material-symbols-outlined text-gray-500">close</span>
+                    </button>
+                </div>
+                <nav class="flex-1 overflow-y-auto space-y-1 scrollbar-hide">
+                    <router-link v-for="item in navItems" :key="item.to"
+                        :to="item.to"
+                        class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200"
+                        :class="isActive(item.to) ? 'bg-indigo-50 text-indigo-600 font-semibold' : 'text-[#464554] hover:bg-gray-50'"
+                        @click="mobileMenuOpen = false">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                            :class="isActive(item.to) ? 'bg-indigo-100 text-indigo-600' : ''">
+                            <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
+                        </div>
+                        <span class="text-sm font-medium">{{ item.label }}</span>
+                    </router-link>
+                </nav>
+                <div class="border-t border-gray-100 pt-4 mt-auto">
+                    <button @click="handleLogout" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-colors">
+                        <span class="material-symbols-outlined text-xl">logout</span>
+                        <span class="text-sm font-medium">Déconnexion</span>
+                    </button>
+                </div>
+            </div>
+        </el-drawer>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- HEADER -->
+            <header class="bg-white/80 backdrop-blur-xl border-b border-gray-100 h-16 flex items-center justify-between px-4 lg:px-6 flex-shrink-0 z-30">
+                <div class="flex items-center gap-3">
+                    <button @click="mobileMenuOpen = true" class="lg:hidden w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                        <span class="material-symbols-outlined text-[#464554] text-2xl">menu</span>
+                    </button>
+                    <!-- Breadcrumb -->
+                    <div class="hidden sm:flex items-center gap-2 text-sm">
+                        <span class="text-[#464554] font-medium">{{ currentBreadcrumb }}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Wallet badge -->
+                    <router-link to="/admin/wallet"
+                        class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                        <span class="material-symbols-outlined text-emerald-600 text-lg">account_balance_wallet</span>
+                        <span class="font-bold text-emerald-700 text-sm whitespace-nowrap">{{ walletStore.wallet ? formatWalletAmount(walletStore.wallet.balanceAvailable) : '—' }}</span>
+                    </router-link>
+
+                    <!-- Notifications placeholder -->
+                    <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors relative">
+                        <span class="material-symbols-outlined text-[#464554] text-2xl">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+
+                    <!-- User avatar -->
+                    <router-link to="/admin/settings" class="hidden sm:flex items-center gap-3 pl-3 border-l border-gray-200 hover:opacity-80 transition-opacity">
+                        <div class="text-right hidden md:block">
+                            <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
+                            <p class="text-[10px] uppercase tracking-wider text-gray-400">Connecté</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
                             {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
                         </div>
                     </router-link>
@@ -171,25 +152,42 @@
             </header>
 
             <!-- TRIAL BANNER -->
-            <div v-if="subscriptionBanner.show"
-                class="mx-4 lg:mx-8 mt-4 px-6 py-3 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-                :class="subscriptionBanner.class">
-                <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-xl">{{ subscriptionBanner.icon }}</span>
-                    <p class="text-sm font-medium">{{ subscriptionBanner.message }}</p>
+            <transition name="slide-down">
+                <div v-if="subscriptionBanner.show"
+                    class="mx-4 lg:mx-6 mt-4 px-5 py-3 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                    :class="subscriptionBanner.class">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-xl">{{ subscriptionBanner.icon }}</span>
+                        <p class="text-sm font-medium">{{ subscriptionBanner.message }}</p>
+                    </div>
+                    <router-link v-if="subscriptionBanner.actionLink" :to="subscriptionBanner.actionLink"
+                        class="px-4 py-1.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap"
+                        :class="subscriptionBanner.actionClass">
+                        {{ subscriptionBanner.actionText }}
+                    </router-link>
                 </div>
-                <router-link v-if="subscriptionBanner.actionLink" :to="subscriptionBanner.actionLink"
-                    class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
-                    :class="subscriptionBanner.actionClass">
-                    {{ subscriptionBanner.actionText }}
-                </router-link>
-            </div>
+            </transition>
 
             <!-- PAGE CONTENT -->
-            <main class="p-4 lg:p-8 max-w-7xl mx-auto">
-                <router-view />
+            <main class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <router-view v-slot="{ Component }">
+                    <transition name="fade-up" mode="out-in">
+                        <component :is="Component" />
+                    </transition>
+                </router-view>
             </main>
         </div>
+
+        <!-- MOBILE BOTTOM NAV (< 640px) -->
+        <nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-1 z-50 shadow-2xl safe-area-bottom">
+            <router-link v-for="item in bottomNavItems" :key="item.to"
+                :to="item.to"
+                class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors min-w-[44px] min-h-[44px] justify-center"
+                :class="isActive(item.to) ? 'text-indigo-600' : 'text-gray-400'">
+                <span class="material-symbols-outlined text-2xl" :class="isActive(item.to) ? 'font-variation-settings-filled' : ''">{{ item.icon }}</span>
+                <span class="text-[10px] font-medium leading-none">{{ item.label }}</span>
+            </router-link>
+        </nav>
     </div>
 </template>
 
@@ -206,53 +204,93 @@ const router = useRouter()
 const authStore = useAuthStore()
 const gymAuthStore = useGymAuthStore()
 const walletStore = useWalletStore()
-const sidebarOpen = ref(false)
+const sidebarExpanded = ref(true)
+const mobileMenuOpen = ref(false)
+const userMenuOpen = ref(false)
 
 function formatWalletAmount(v) {
     return ((v || 0)).toLocaleString('fr-FR') + ' FCFA'
 }
 
-const hasShopFeature = computed(() => {
-    const s = gymAuthStore.subscription
-    if (!s) return false
-    return s.status === 'trial' || (s.status === 'active' && s.planType === 'premium')
+function isActive(path) {
+    if (path === '/admin/dashboard') return route.path === '/admin/dashboard'
+    return route.path.startsWith(path)
+}
+
+const currentBreadcrumb = computed(() => {
+    const map = {
+        'dashboard': 'Tableau de bord',
+        'clients': 'Clients',
+        'subscriptions': 'Abonnements',
+        'payments': 'Paiements',
+        'orders': 'Commandes',
+        'products': 'Produits',
+        'categories': 'Catégories',
+        'users': 'Utilisateurs',
+        'wallet': 'Porte-monnaie',
+        'settings': 'Paramètres',
+        'gym': 'Ma salle',
+        'subscription-types': "Types d'abonnement",
+    }
+    const name = route.name?.toString().replace('admin-', '')
+    return map[name] || 'Dashboard'
 })
 
-const subscriptionBanner = computed(() => {
-    const s = gymAuthStore.subscription
-    if (!s) return { show: false }
+const navItems = [
+    { to: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
+    { to: '/admin/clients', icon: 'group', label: 'Clients' },
+    { to: '/admin/subscriptions', icon: 'card_membership', label: 'Abonnements' },
+    { to: '/admin/payments', icon: 'payments', label: 'Paiements' },
+    { to: '/admin/orders', icon: 'shopping_bag', label: 'Commandes' },
+    { to: '/admin/products', icon: 'inventory_2', label: 'Produits' },
+    { to: '/admin/categories', icon: 'category', label: 'Catégories' },
+    { to: '/admin/users', icon: 'manage_accounts', label: 'Utilisateurs' },
+    { to: '/admin/wallet', icon: 'account_balance_wallet', label: 'Porte-monnaie' },
+    { to: '/admin/subscription-types', icon: 'style', label: "Types d'abonnement" },
+    { to: '/scan', icon: 'qr_code_scanner', label: 'Scanner QR' },
+    { to: '/admin/settings', icon: 'settings', label: 'Paramètres' },
+]
 
-    if (s.status === 'expired') {
-        return {
-            show: true,
-            class: 'bg-red-50 border border-red-200 text-red-700',
-            icon: 'error',
-            message: 'Votre abonnement a expire. Renouvelez-le pour continuer a utiliser Kinetic Pulse.',
-            actionLink: '/admin/gym/subscription',
-            actionText: 'Renouveler',
-            actionClass: 'bg-red-600 text-white hover:bg-red-700',
-        }
-    }
-
-    if (s.status === 'trial' && s.daysLeft <= 3) {
-        return {
-            show: true,
-            class: 'bg-amber-50 border border-amber-200 text-amber-700',
-            icon: 'timer',
-            message: `Votre essai gratuit expire dans ${s.daysLeft} jour${s.daysLeft > 1 ? 's' : ''}. Souscrivez a la formule Premium.`,
-            actionLink: '/admin/gym/subscription',
-            actionText: 'Souscrire',
-            actionClass: 'bg-amber-600 text-white hover:bg-amber-700',
-        }
-    }
-
-    return { show: false }
-})
+const bottomNavItems = [
+    { to: '/admin/dashboard', icon: 'dashboard', label: 'Accueil' },
+    { to: '/admin/clients', icon: 'group', label: 'Clients' },
+    { to: '/scan', icon: 'qr_code_scanner', label: 'Scanner' },
+    { to: '/admin/products', icon: 'inventory_2', label: 'Produits' },
+    { to: '/admin/wallet', icon: 'account_balance_wallet', label: 'Wallet' },
+]
 
 const handleLogout = () => {
     authStore.logout()
     router.push('/login')
 }
+
+const subscriptionBanner = computed(() => {
+    const s = gymAuthStore.subscription
+    if (!s) return { show: false }
+    if (s.status === 'expired') {
+        return {
+            show: true,
+            class: 'bg-red-50 border border-red-200 text-red-700',
+            icon: 'error',
+            message: 'Votre abonnement a expiré. Renouvelez-le pour continuer à utiliser Kinetic Pulse.',
+            actionLink: '/admin/gym/subscription',
+            actionText: 'Renouveler',
+            actionClass: 'bg-red-600 text-white hover:bg-red-700',
+        }
+    }
+    if (s.status === 'trial' && s.daysLeft <= 3) {
+        return {
+            show: true,
+            class: 'bg-amber-50 border border-amber-200 text-amber-700',
+            icon: 'timer',
+            message: `Votre essai gratuit expire dans ${s.daysLeft} jour${s.daysLeft > 1 ? 's' : ''}. Souscrivez à la formule Premium.`,
+            actionLink: '/admin/gym/subscription',
+            actionText: 'Souscrire',
+            actionClass: 'bg-amber-600 text-white hover:bg-amber-700',
+        }
+    }
+    return { show: false }
+})
 
 onMounted(async () => {
     if (gymAuthStore.token || authStore.token) {
@@ -269,9 +307,19 @@ onMounted(async () => {
         gymAuthStore.fetchSubscription().catch(() => {})
     }
     walletStore.fetchWallet().catch(() => {})
+
+    const savedSidebar = localStorage.getItem('sidebar_expanded')
+    if (savedSidebar !== null) {
+        sidebarExpanded.value = savedSidebar === 'true'
+    }
 })
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+<style scoped>
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.font-variation-settings-filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
 </style>

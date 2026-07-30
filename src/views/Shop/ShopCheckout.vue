@@ -1,154 +1,136 @@
 <template>
-    <div class="max-w-4xl mx-auto px-4 py-10">
+  <div class="min-h-screen bg-[#faf8ff] pb-24">
+    <!-- Header -->
+    <div class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100">
+      <div class="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto">
+        <div class="flex items-center gap-3">
+          <button @click="$router.back()" class="min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
+            <span class="material-symbols-outlined text-[#131b2e] text-2xl">arrow_back</span>
+          </button>
+          <h1 class="font-black text-[#131b2e] text-lg">Finaliser la commande</h1>
+        </div>
+      </div>
+    </div>
 
-        <h1 class="text-3xl font-black text-gray-800 mb-8">Finaliser la commande</h1>
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Form -->
+        <div class="lg:col-span-2">
+          <el-form ref="formRef" :model="form" :rules="rules" label-position="top" size="large">
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <!-- Formulaire -->
-            <div class="lg:col-span-2">
-                <el-form ref="formRef" :model="form" :rules="rules" label-position="top" size="large">
-
-                    <!-- Mode de livraison -->
-                    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                        <h2 class="font-black text-gray-800 mb-4">Mode de livraison</h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="border-2 rounded-xl p-4 cursor-pointer transition-all" :class="form.delivery_type === 'retrait'
-                                ? 'border-indigo-500 bg-indigo-50'
-                                : 'border-gray-200 hover:border-indigo-300'" @click="form.delivery_type = 'retrait'">
-                                <el-icon class="text-2xl text-indigo-600 mb-2">
-                                    <Location />
-                                </el-icon>
-                                <p class="font-bold text-gray-800">Retrait en salle</p>
-                                <p class="text-xs text-gray-500 mt-1">Gratuit — disponible sous 24h</p>
-                            </div>
-
-                            <div class="border-2 rounded-xl p-4 cursor-pointer transition-all" :class="form.delivery_type === 'livraison'
-                                ? 'border-indigo-500 bg-indigo-50'
-                                : 'border-gray-200 hover:border-indigo-300'" @click="form.delivery_type = 'livraison'">
-                                <el-icon class="text-2xl text-indigo-600 mb-2">
-                                    <Van />
-                                </el-icon>
-                                <p class="font-bold text-gray-800">Livraison à domicile</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ formatCurrency(DELIVERY_FEE) }} — 2 à 5 jours
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Adresse -->
-                    <Transition name="fade">
-                        <div v-if="form.delivery_type === 'livraison'" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                            <h2 class="font-black text-gray-800 mb-4">Adresse de livraison</h2>
-                            <el-form-item label="Adresse complète" prop="delivery_address">
-                                <el-input v-model="form.delivery_address" type="textarea" :rows="3"
-                                    placeholder="12 rue des Sports, Cotonou" />
-                            </el-form-item>
-                        </div>
-                    </Transition>
-
-                    <!-- Infos contact -->
-                    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                        <h2 class="font-black text-gray-800 mb-4">Informations de contact</h2>
-                        <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
-                                {{ currentUser?.name?.charAt(0) }}
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800">{{ currentUser?.name }}</p>
-                                <p class="text-sm text-gray-500">{{ currentUser?.email }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Paiement -->
-                    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                        <h2 class="font-black text-gray-800 mb-2">Paiement</h2>
-                        <p class="text-sm text-gray-500 mb-4">
-                            Votre paiement est sécurisé via FedaPay.
-                            La commande sera confirmée après validation du paiement.
-                        </p>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div
-                                class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1">
-                                <span class="text-xl">💵</span>
-                                <span class="text-xs font-bold text-gray-600">Espèces</span>
-                            </div>
-                            <div
-                                class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1">
-                                <span class="text-xl">💳</span>
-                                <span class="text-xs font-bold text-gray-600">Carte</span>
-                            </div>
-                            <div
-                                class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1">
-                                <span class="text-xl">📱</span>
-                                <span class="text-xs font-bold text-gray-600">Mobile Money</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </el-form>
-            </div>
-
-            <!-- Récapitulatif -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
-                    <h2 class="font-black text-gray-800 text-lg mb-4">Votre commande</h2>
-
-                    <div class="space-y-3 mb-6">
-                        <div v-for="item in cartStore.items" :key="item.product.id"
-                            class="flex justify-between items-center text-sm">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {{ item.quantity }}
-                                </span>
-                                <span class="text-gray-700">{{ item.product.name }}</span>
-                            </div>
-                            <span class="font-semibold text-gray-800">
-                                {{ formatCurrency(item.price * item.quantity) }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-4 space-y-2 mb-6">
-                        <div class="flex justify-between text-sm text-gray-600">
-                            <span>Sous-total</span>
-                            <span>{{ formatCurrency(cartStore.total) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm text-gray-600">
-                            <span>Livraison</span>
-                            <span :class="form.delivery_type === 'livraison' ? 'text-gray-800' : 'text-green-600'">
-                                {{ form.delivery_type === 'livraison' ? formatCurrency(DELIVERY_FEE) : 'Gratuit' }}
-                            </span>
-                        </div>
-                        <div class="flex justify-between font-black text-gray-800 text-lg pt-2 border-t">
-                            <span>Total</span>
-                            <span class="text-indigo-600">{{ formatCurrency(orderTotal) }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Bouton checkout → déclenche FedaPay -->
-                    <el-button type="primary" size="large" class="w-full" :loading="loading"
-                        style="background-color: #4f46e5; border-color: #4f46e5; border-radius: 12px; font-weight: 700;"
-                        @click="handleOrder">
-                        <span v-if="!loading">Payer {{ formatCurrency(orderTotal) }}</span>
-                        <span v-else>Traitement...</span>
-                    </el-button>
-
-                    <p class="text-xs text-gray-400 text-center mt-3">
-                        Paiement sécurisé via FedaPay
-                    </p>
+            <!-- Delivery mode -->
+            <div class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+              <h2 class="font-black text-[#131b2e] mb-4">Mode de livraison</h2>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="border-2 rounded-xl p-4 cursor-pointer transition-all min-h-[80px]" :class="form.delivery_type === 'retrait' ? 'border-[#4f46e5] bg-[#e0e7ff]' : 'border-gray-200 hover:border-indigo-300'" @click="form.delivery_type = 'retrait'">
+                  <span class="material-symbols-outlined text-2xl text-[#4f46e5] mb-1">location_on</span>
+                  <p class="font-bold text-[#131b2e] text-sm">Retrait en salle</p>
+                  <p class="text-xs text-[#464554] mt-0.5">Gratuit — disponible sous 24h</p>
                 </div>
+                <div class="border-2 rounded-xl p-4 cursor-pointer transition-all min-h-[80px]" :class="form.delivery_type === 'livraison' ? 'border-[#4f46e5] bg-[#e0e7ff]' : 'border-gray-200 hover:border-indigo-300'" @click="form.delivery_type = 'livraison'">
+                  <span class="material-symbols-outlined text-2xl text-[#4f46e5] mb-1">local_shipping</span>
+                  <p class="font-bold text-[#131b2e] text-sm">Livraison à domicile</p>
+                  <p class="text-xs text-[#464554] mt-0.5">{{ formatCurrency(DELIVERY_FEE) }} — 2 à 5 jours</p>
+                </div>
+              </div>
             </div>
 
+            <!-- Address -->
+            <Transition name="fade">
+              <div v-if="form.delivery_type === 'livraison'" class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+                <h2 class="font-black text-[#131b2e] mb-4">Adresse de livraison</h2>
+                <el-form-item label="Adresse complète" prop="delivery_address">
+                  <el-input v-model="form.delivery_address" type="textarea" :rows="3" placeholder="12 rue des Sports, Cotonou" />
+                </el-form-item>
+              </div>
+            </Transition>
+
+            <!-- Contact info -->
+            <div class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+              <h2 class="font-black text-[#131b2e] mb-4">Informations de contact</h2>
+              <div class="bg-[#e0e7ff] rounded-xl p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#4f46e5] flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {{ currentUser?.name?.charAt(0) || '?' }}
+                </div>
+                <div>
+                  <p class="font-bold text-[#131b2e]">{{ currentUser?.name || 'Client' }}</p>
+                  <p class="text-sm text-[#464554]">{{ currentUser?.email || 'Non connecté' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+              <h2 class="font-black text-[#131b2e] mb-2">Paiement</h2>
+              <p class="text-sm text-[#464554] mb-4">Votre paiement est sécurisé via FedaPay. La commande sera confirmée après validation du paiement.</p>
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1.5">
+                  <span class="material-symbols-outlined text-2xl text-gray-500">payments</span>
+                  <span class="text-xs font-bold text-[#464554]">Espèces</span>
+                </div>
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1.5">
+                  <span class="material-symbols-outlined text-2xl text-gray-500">credit_card</span>
+                  <span class="text-xs font-bold text-[#464554]">Carte</span>
+                </div>
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center gap-1.5">
+                  <span class="material-symbols-outlined text-2xl text-gray-500">smartphone</span>
+                  <span class="text-xs font-bold text-[#464554]">Mobile Money</span>
+                </div>
+              </div>
+            </div>
+
+          </el-form>
         </div>
 
-        <!-- Bouton FedaPay invisible — déclenché programmatiquement -->
-        <button id="fedapay-btn" style="display: none;"></button>
+        <!-- Order summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-2xl shadow-sm p-5 lg:sticky lg:top-24">
+            <h2 class="font-black text-[#131b2e] text-lg mb-4">Votre commande</h2>
 
+            <div class="space-y-3 mb-5">
+              <div v-for="item in cartStore.items" :key="item.product.id" class="flex justify-between items-center text-sm">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="bg-[#e0e7ff] text-[#4f46e5] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">{{ item.quantity }}</span>
+                  <span class="text-[#464554] truncate">{{ item.product.name }}</span>
+                </div>
+                <span class="font-semibold text-[#131b2e] flex-shrink-0 ml-2">{{ formatCurrency(item.price * item.quantity) }}</span>
+              </div>
+            </div>
+
+            <div class="border-t pt-4 space-y-2 mb-5">
+              <div class="flex justify-between text-sm text-[#464554]">
+                <span>Sous-total</span>
+                <span>{{ formatCurrency(cartStore.total) }}</span>
+              </div>
+              <div class="flex justify-between text-sm text-[#464554]">
+                <span>Livraison</span>
+                <span :class="form.delivery_type === 'livraison' ? 'text-[#131b2e]' : 'text-green-600'">
+                  {{ form.delivery_type === 'livraison' ? formatCurrency(DELIVERY_FEE) : 'Gratuit' }}
+                </span>
+              </div>
+              <div class="flex justify-between font-black text-[#131b2e] text-lg pt-2 border-t">
+                <span>Total</span>
+                <span class="text-[#4f46e5]">{{ formatCurrency(orderTotal) }}</span>
+              </div>
+            </div>
+
+            <el-button type="primary" size="large" class="w-full" :loading="loading"
+              style="background-color:#4f46e5;border-color:#4f46e5;border-radius:12px;font-weight:700;height:48px;"
+              @click="handleOrder">
+              <span v-if="!loading">Payer {{ formatCurrency(orderTotal) }}</span>
+              <span v-else>Traitement...</span>
+            </el-button>
+
+            <p class="text-xs text-[#464554]/50 text-center mt-3">
+              Paiement sécurisé via FedaPay
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button id="fedapay-btn" style="display:none;"></button>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -159,7 +141,6 @@ import { useShopStore } from '@/stores/shop'
 import { useAuthStore } from '@/stores/auth'
 import { useGymAuthStore } from '@/stores/gymAuth'
 import Swal from 'sweetalert2'
-import { Location, Van } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
