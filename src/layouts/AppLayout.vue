@@ -90,14 +90,6 @@
                     <span class="text-sm font-medium">Types d'abonnement</span>
                 </router-link>
 
-                <router-link to="/admin/wallet"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
-                    :class="route.path === '/admin/wallet' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
-                    @click="sidebarOpen = false">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                    <span class="text-sm font-medium">Porte-monnaie</span>
-                </router-link>
-
                 <router-link to="/admin/settings"
                     class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
                     @click="sidebarOpen = false">
@@ -159,16 +151,23 @@
 
                 <div class="hidden lg:block"></div>
 
-                <router-link to="/admin/settings" class="flex items-center gap-3 pl-6 border-l border-slate-200 hover:opacity-80 transition-opacity ml-auto">
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
-                        <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté(e)</p>
-                    </div>
-                    <div
-                        class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
-                        {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
-                    </div>
-                </router-link>
+                <div class="flex items-center gap-4 ml-auto">
+                    <router-link to="/admin/wallet"
+                        class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-emerald-600 text-xl">account_balance_wallet</span>
+                        <span class="font-bold text-emerald-700 text-sm">{{ walletStore.wallet ? formatWalletAmount(walletStore.wallet.balanceAvailable) : '—' }}</span>
+                    </router-link>
+                    <router-link to="/admin/settings" class="flex items-center gap-3 pl-4 border-l border-slate-200 hover:opacity-80 transition-opacity">
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
+                            <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté(e)</p>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-white">
+                            {{ authStore.user?.name?.charAt(0).toUpperCase() || 'A' }}
+                        </div>
+                    </router-link>
+                </div>
             </header>
 
             <!-- TRIAL BANNER -->
@@ -198,6 +197,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useGymAuthStore } from '@/stores/gymAuth'
+import { useWalletStore } from '@/stores/wallet'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/plugins/axios'
 
@@ -205,7 +205,12 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const gymAuthStore = useGymAuthStore()
+const walletStore = useWalletStore()
 const sidebarOpen = ref(false)
+
+function formatWalletAmount(v) {
+    return ((v || 0)).toLocaleString('fr-FR') + ' FCFA'
+}
 
 const hasShopFeature = computed(() => {
     const s = gymAuthStore.subscription
@@ -263,6 +268,7 @@ onMounted(async () => {
     if (gymAuthStore.token) {
         gymAuthStore.fetchSubscription().catch(() => {})
     }
+    walletStore.fetchWallet().catch(() => {})
 })
 </script>
 
