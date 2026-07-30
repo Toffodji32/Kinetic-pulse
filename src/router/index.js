@@ -15,6 +15,7 @@ import Settings from '@/views/Dashboard/Settings.vue'
 import Subscriptions from '@/views/Dashboard/Subscriptions.vue'
 import SubscriptionTypes from '@/views/Dashboard/SubscriptionTypes.vue'
 import Users from '@/views/Dashboard/Users.vue'
+import WalletView from '@/views/Dashboard/WalletView.vue'
 import Login from '@/views/Login.vue'
 import NotFound from '@/views/NotFound.vue'
 import ScanView from '@/views/ScanView.vue'
@@ -28,6 +29,7 @@ import SuperAdminGyms from '@/views/SuperAdmin/SuperAdminGyms.vue'
 import SuperAdminGymDetail from '@/views/SuperAdmin/SuperAdminGymDetail.vue'
 import SuperAdminSettings from '@/views/SuperAdmin/SuperAdminSettings.vue'
 import SuperAdminSubscriptions from '@/views/SuperAdmin/SuperAdminSubscriptions.vue'
+import WithdrawalsAdmin from '@/views/SuperAdmin/WithdrawalsAdmin.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -77,6 +79,7 @@ const router = createRouter({
         { path: 'gym/info',      name: 'admin-gym-info',      component: GymInfo      },
         { path: 'categories',    name: 'admin-categories',    component: Categories    },
         { path: 'gym/subscription', name: 'admin-gym-subscription', component: GymSubscriptionPage },
+        { path: 'wallet',        name: 'admin-wallet',        component: WalletView   },
         { path: 'settings',      name: 'admin-settings',      component: Settings      },
       ],
     },
@@ -93,6 +96,7 @@ const router = createRouter({
         { path: 'gyms/:id',      name: 'super-admin-gym-detail',  component: SuperAdminGymDetail },
         { path: 'subscriptions', name: 'super-admin-subscriptions', component: SuperAdminSubscriptions },
         { path: 'settings',     name: 'super-admin-settings',     component: SuperAdminSettings },
+        { path: 'withdrawals',  name: 'super-admin-withdrawals',  component: WithdrawalsAdmin },
       ],
     },
 

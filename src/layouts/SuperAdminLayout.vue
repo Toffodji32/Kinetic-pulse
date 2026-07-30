@@ -40,6 +40,14 @@
                     <span class="text-sm font-medium">Abonnements</span>
                 </router-link>
 
+                <router-link to="/super-admin/withdrawals"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
+                    :class="route.path === '/super-admin/withdrawals' ? 'bg-indigo-600/20 text-indigo-300 shadow-sm font-semibold' : 'text-gray-400 hover:bg-white/5'"
+                    @click="sidebarOpen = false">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    <span class="text-sm font-medium">Retraits</span>
+                </router-link>
+
                 <router-link to="/super-admin/settings"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
                     :class="route.path === '/super-admin/settings' ? 'bg-indigo-600/20 text-indigo-300 shadow-sm font-semibold' : 'text-gray-400 hover:bg-white/5'"

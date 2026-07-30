@@ -90,6 +90,14 @@
                     <span class="text-sm font-medium">Types d'abonnement</span>
                 </router-link>
 
+                <router-link to="/admin/wallet"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer select-none hover:translate-x-1 transition-transform duration-200"
+                    :class="route.path === '/admin/wallet' ? 'bg-white text-indigo-600 shadow-sm font-semibold' : 'text-slate-500 hover:bg-white/50'"
+                    @click="sidebarOpen = false">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    <span class="text-sm font-medium">Porte-monnaie</span>
+                </router-link>
+
                 <router-link to="/admin/settings"
                     class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-white/50 rounded-lg cursor-pointer hover:translate-x-1 transition-transform duration-200"
                     @click="sidebarOpen = false">
