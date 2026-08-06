@@ -72,8 +72,8 @@ const router = useRouter()
 const route = useRoute()
 
 const gymSlug = computed(() => route.params.gymSlug || '')
-const isConnected = computed(() => authStore.isAuthenticated || !!gymAuthStore.user)
-const currentUser = computed(() => authStore.user || gymAuthStore.user)
+const isConnected = computed(() => !!gymAuthStore.user || authStore.isAuthenticated)
+const currentUser = computed(() => gymAuthStore.user || authStore.user)
 
 function gymShopPath(suffix = '') {
     return gymSlug.value ? `/shop/${gymSlug.value}${suffix}` : `/shop${suffix}`

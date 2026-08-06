@@ -187,12 +187,13 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const authStore = useAuthStore()
+  const gymAuthStore = useGymAuthStore()
 
-  const isAuthenticated = authStore.isAuthenticated
+  const isAuthenticated = authStore.isAuthenticated || gymAuthStore.isGymAuthenticated
   const userRoles       = authStore.user?.roles || []
   const isAdmin         = userRoles.includes('ROLE_ADMIN')
   const isReceptionist  = userRoles.includes('ROLE_USER')
-  const isClient        = userRoles.includes('ROLE_CLIENT')
+  const isClient        = userRoles.includes('ROLE_CLIENT') || gymAuthStore.user?.roles?.includes('ROLE_CLIENT')
 
   // ── 1. Routes publiques → toujours autorisé ──
   if (to.meta.public) return true
