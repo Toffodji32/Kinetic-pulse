@@ -235,6 +235,11 @@ router.beforeEach((to, from) => {
       if (isClient) return { name: 'shop-home' }
       return { name: 'login' }
     }
+    // Abonnement expiré → uniquement la page d'abonnement est accessible
+    if ((isAdmin || isReceptionist) && gymAuthStore.subscription?.status === 'expired'
+      && to.name !== 'admin-gym-subscription') {
+      return { name: 'admin-gym-subscription' }
+    }
     return true
   }
 
