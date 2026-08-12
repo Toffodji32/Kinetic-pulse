@@ -299,7 +299,7 @@ async function handleCreate() {
                 title: 'Compte créé !',
                 html: `<p>Le compte de <strong>${form.value.name}</strong> a été créé avec succès.</p>`,
                 confirmButtonColor: '#4f46e5',
-                confirmButtonText: 'Super !',
+                confirmButtonText: 'OK !',
             })
         } catch {
             Swal.fire({

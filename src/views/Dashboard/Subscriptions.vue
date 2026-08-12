@@ -485,7 +485,7 @@ async function handleCreate() {
                 title: 'Abonnement créé !',
                 text: "L'abonnement a été créé avec succès.",
                 confirmButtonColor: '#4f46e5',
-                confirmButtonText: 'Super !',
+                confirmButtonText: 'OK !',
             })
             resetCreateForm()
         } catch {

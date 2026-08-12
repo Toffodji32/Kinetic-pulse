@@ -333,7 +333,9 @@
 </template>
 
 <script setup>
+import { sendQrCodeEmail } from '@/services/emailjs'
 import { useClientStore } from '@/stores/client'
+import { mediaUrl } from '@/utils/media'
 import {
     Delete,
     Edit,
@@ -344,8 +346,6 @@ import {
     View
 } from '@element-plus/icons-vue'
 import Swal from 'sweetalert2'
-import { mediaUrl } from '@/utils/media'
-import { sendQrCodeEmail } from '@/services/emailjs'
 import { computed, onMounted, ref } from 'vue'
 
 const clientStore = useClientStore()
@@ -437,7 +437,7 @@ async function handleCreate() {
                 title: 'Client créé !',
                 html: `<p>${form.value.firstName} ${form.value.lastName} a été ajouté avec succès.</p>${emailMsg}`,
                 confirmButtonColor: '#4f46e5',
-                confirmButtonText: 'Super !',
+                confirmButtonText: 'OK !',
                 borderRadius: '16px',
             })
 

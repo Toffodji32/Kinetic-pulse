@@ -265,7 +265,7 @@ async function handleCreate() {
                 title: 'Catégorie créée !',
                 text: `"${createForm.value.name}" a été ajoutée avec succès.`,
                 confirmButtonColor: '#4f46e5',
-                confirmButtonText: 'Super !',
+                confirmButtonText: 'OK!',
             })
             resetCreateForm()
         } catch (err) {

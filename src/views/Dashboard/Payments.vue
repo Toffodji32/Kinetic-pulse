@@ -442,7 +442,7 @@ async function handleCreate() {
                 title: 'Paiement enregistré !',
                 text: 'Le paiement a été enregistré avec succès.',
                 confirmButtonColor: '#4f46e5',
-                confirmButtonText: 'Super !',
+                confirmButtonText: 'OK !',
             })
 
             resetForm()

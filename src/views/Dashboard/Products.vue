@@ -522,7 +522,7 @@ async function handleCreate() {
         Swal.fire({
             icon: 'success', title: 'Produit créé !',
             text: `${createForm.value.name} a été ajouté au catalogue.`,
-            confirmButtonColor: '#4f46e5', confirmButtonText: 'Super !',
+            confirmButtonColor: '#4f46e5', confirmButtonText: 'OK !',
         })
         resetCreateForm()
     } catch {
