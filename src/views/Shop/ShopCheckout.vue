@@ -158,6 +158,7 @@ import { useCartStore } from '@/stores/cart'
 import { useShopStore } from '@/stores/shop'
 import { useAuthStore } from '@/stores/auth'
 import { useGymAuthStore } from '@/stores/gymAuth'
+import gymHttp from '@/plugins/gymHttp'
 import Swal from 'sweetalert2'
 import { Location, Van } from '@element-plus/icons-vue'
 
@@ -227,7 +228,7 @@ async function handleOrder() {
 }
 
 // ── Étape 2 : lancer le widget FedaPay ───────────
-function launchFedaPay() {
+async function launchFedaPay() {
     loading.value = true
 
     const user = currentUser.value
@@ -237,6 +238,19 @@ function launchFedaPay() {
     const firstname = nameParts[0] || 'Client'
     const lastname = nameParts.slice(1).join(' ') || ''
 
+    // Résoudre le gym_id pour que le webhook FedaPay crédite le bon wallet
+    let gymId = null
+    try {
+        if (gymSlug.value) {
+            const { data } = await gymHttp.get(`/shop/${gymSlug.value}/info`)
+            gymId = data.id
+        } else if (gymAuthStore.gym?.id) {
+            gymId = gymAuthStore.gym.id
+        }
+    } catch {
+        gymId = null
+    }
+
     // @ts-ignore — FedaPay est chargé via CDN
     FedaPay.init('#fedapay-btn', {
         public_key: 'pk_sandbox_hJix3Vgf3L9UNj3Fs4EObNRo', // ← remplace par ta vraie clé
@@ -244,6 +258,7 @@ function launchFedaPay() {
             amount: totalAmount,
             description: `Commande Kinetic Gym — ${cartStore.count} article(s)`,
             currency: { iso: 'XOF' }, // FCFA
+            metadata: gymId ? { gym_id: gymId, source: 'shop_order' } : { source: 'shop_order' },
         },
         customer: {
             email: user?.email || 'client@example.com',

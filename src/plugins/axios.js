@@ -37,7 +37,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Intercepteur pour gérer les erreurs (401 JWT expiré)
+// Intercepteur pour gérer les erreurs (401 JWT expiré, 402 abonnement expiré)
 api.interceptors.response.use(
   response => response,
   (error) => {
@@ -47,6 +47,12 @@ api.interceptors.response.use(
       console.warn('JWT expiré ou non valide, déconnexion...');
       authStore.logout();
       router.push('/login');
+    }
+
+    if (error.response?.status === 402 && error.response?.data?.code === 'SUBSCRIPTION_EXPIRED') {
+      if (router.currentRoute.value.path !== '/admin/gym/subscription') {
+        router.push('/admin/gym/subscription');
+      }
     }
 
     return Promise.reject(error);

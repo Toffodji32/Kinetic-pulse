@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import SuperAdminLayout from '@/layouts/SuperAdminLayout.vue'
 import ShopLayout from '@/layouts/ShopLayout.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useGymAuthStore } from '@/stores/gymAuth'
 import Categories from '@/views/Dashboard/Categories.vue'
 import Clients from '@/views/Dashboard/Clients.vue'
 import Dashboard from '@/views/Dashboard/Dashboard.vue'
@@ -187,12 +188,13 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const authStore = useAuthStore()
+  const gymAuthStore = useGymAuthStore()
 
-  const isAuthenticated = authStore.isAuthenticated
+  const isAuthenticated = authStore.isAuthenticated || gymAuthStore.isGymAuthenticated
   const userRoles       = authStore.user?.roles || []
   const isAdmin         = userRoles.includes('ROLE_ADMIN')
   const isReceptionist  = userRoles.includes('ROLE_USER')
-  const isClient        = userRoles.includes('ROLE_CLIENT')
+  const isClient        = userRoles.includes('ROLE_CLIENT') || gymAuthStore.user?.roles?.includes('ROLE_CLIENT')
 
   // ── 1. Routes publiques → toujours autorisé ──
   if (to.meta.public) return true
@@ -232,6 +234,11 @@ router.beforeEach((to, from) => {
     if (!isAdmin && !isReceptionist) {
       if (isClient) return { name: 'shop-home' }
       return { name: 'login' }
+    }
+    // Abonnement expiré → uniquement la page d'abonnement est accessible
+    if ((isAdmin || isReceptionist) && gymAuthStore.subscription?.status === 'expired'
+      && to.name !== 'admin-gym-subscription') {
+      return { name: 'admin-gym-subscription' }
     }
     return true
   }
