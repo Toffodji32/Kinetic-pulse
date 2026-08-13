@@ -235,7 +235,7 @@
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
 
-                <!-- Revenue Chart — barres statiques car pas de données historiques dans l'API -->
+                <!-- Revenue Chart — données réelles via revenueTrend du dashboard -->
                 <div class="lg:col-span-2 bg-white rounded-xl p-8 shadow-sm">
                     <div class="flex justify-between items-center mb-8">
                         <div>
@@ -252,11 +252,16 @@
                         </div>
                     </div>
                     <div class="h-64 flex items-end justify-between gap-4 pt-4">
-                        <div v-for="(bar, i) in chartBars" :key="i" class="flex-1 bg-[#f2f3ff] relative group h-full">
+                        <div v-for="(bar, i) in chartBars" :key="i" class="flex-1 bg-[#f2f3ff] relative group h-full"
+                            :title="chartTitle(bar)">
                             <div class="absolute bottom-0 w-full bg-indigo-200 rounded-t transition-all"
                                 :style="{ height: bar.prev }"></div>
                             <div class="absolute bottom-0 w-full bg-indigo-600 rounded-t transition-all group-hover:opacity-80"
                                 :style="{ height: bar.curr }"></div>
+                            <span
+                                class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-black text-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                {{ formatCurrency(bar.amount) }}
+                            </span>
                         </div>
                     </div>
                     <div
@@ -465,14 +470,24 @@ function formatTime(dateStr) {
     })
 }
 
-// ── Chart (statique — pas de données historiques dans l'API) ──
-const chartBars = [
-    { prev: '40%', curr: '55%' },
-    { prev: '45%', curr: '65%' },
-    { prev: '50%', curr: '40%' },
-    { prev: '60%', curr: '85%' },
-    { prev: '70%', curr: '75%' },
-    { prev: '65%', curr: '95%' },
-]
-const months = ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin']
+// ── Chart (données réelles : revenueTrend de /api/dashboard) ──
+const trend = computed(() => dash.stats?.revenueTrend || [])
+
+const maxTrend = computed(() => {
+    const values = trend.value.flatMap(m => [Number(m.current) || 0, Number(m.previous) || 0])
+    return values.length ? Math.max(...values) : 0
+})
+
+const chartBars = computed(() => trend.value.map(m => ({
+    amount: Number(m.current) || 0,
+    curr: maxTrend.value > 0 ? `${Math.round((Number(m.current) || 0) / maxTrend.value * 100)}%` : '2%',
+    prev: maxTrend.value > 0 ? `${Math.round((Number(m.previous) || 0) / maxTrend.value * 100)}%` : '0%',
+})))
+
+const months = computed(() => trend.value.map(m => m.month))
+
+function chartTitle(bar) {
+    if (!bar) return ''
+    return `En cours : ${formatCurrency(bar.amount)}`
+}
 </script>
