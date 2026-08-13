@@ -5,6 +5,7 @@ import { useCartStore } from './cart'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
+    refreshToken: localStorage.getItem('refresh_token') || null,
     user: (() => {
       try {
         const stored = localStorage.getItem('user')
@@ -35,15 +36,19 @@ export const useAuthStore = defineStore('auth', {
         const { data } = await api.post('/login', { email, password })
 
         this.token = data.token
+        this.refreshToken = data.refresh_token
         this.user = data.user // ← directement depuis la réponse login
 
         localStorage.setItem('token', data.token)
+        localStorage.setItem('refresh_token', data.refresh_token)
         localStorage.setItem('user', JSON.stringify(data.user))
       } catch (err) {
         this.error = err.response?.data?.error || 'Erreur de connexion'
         this.token = null
+        this.refreshToken = null
         this.user = null
         localStorage.removeItem('token')
+        localStorage.removeItem('refresh_token')
         throw err
       } finally {
         this.loading = false
@@ -62,10 +67,19 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    setTokens(token, refreshToken) {
+      this.token = token
+      this.refreshToken = refreshToken
+      localStorage.setItem('token', token)
+      if (refreshToken) localStorage.setItem('refresh_token', refreshToken)
+    },
+
     logout() {
       this.token = null
+      this.refreshToken = null
       this.user = null
       localStorage.removeItem('token')
+      localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       useCartStore().clear()
     },

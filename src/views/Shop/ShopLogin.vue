@@ -188,8 +188,10 @@ async function handleLogin() {
             // admin ou receptionniste → authStore (token dans localStorage)
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_USER')) {
                 authStore.token = data.token
+                authStore.refreshToken = data.refresh_token
                 authStore.user = data.user
                 localStorage.setItem('token', data.token)
+                localStorage.setItem('refresh_token', data.refresh_token)
                 localStorage.setItem('user', JSON.stringify(data.user))
                 router.push({ name: 'dashboard' })
                 return
@@ -198,6 +200,7 @@ async function handleLogin() {
             // client → gym_token (ne touche pas au token admin)
             localStorage.setItem('gym_token', data.token)
             localStorage.setItem('gym_user', JSON.stringify(data.user))
+            localStorage.setItem('refresh_token', data.refresh_token)
             gymAuthStore.token = data.token
             gymAuthStore.user = data.user
 

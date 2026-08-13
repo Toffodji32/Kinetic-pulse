@@ -55,8 +55,10 @@ export const useGymAuthStore = defineStore('gymAuth', {
 
         const authStore = useAuthStore()
         authStore.token = data.token
+        authStore.refreshToken = data.refresh_token
         authStore.user = data.user
         localStorage.setItem('token', data.token)
+        localStorage.setItem('refresh_token', data.refresh_token)
         localStorage.setItem('user', JSON.stringify(data.user))
 
         return data
@@ -103,6 +105,8 @@ export const useGymAuthStore = defineStore('gymAuth', {
       localStorage.removeItem('gym_token')
       localStorage.removeItem('gym_user')
       localStorage.removeItem('gym_gym')
+      const authStore = useAuthStore()
+      authStore.logout()
     },
   },
 })
