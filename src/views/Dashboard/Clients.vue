@@ -244,7 +244,7 @@
                         :style="{ backgroundColor: getAvatarColor(selectedClient.firstName) }">
                         {{ selectedClient.firstName?.charAt(0) }}{{ selectedClient.lastName?.charAt(0) }}
                     </div>
-                    <img v-else :src="mediaUrl(selectedClient.photo)"
+                    <img v-else :src="photoImageUrl(selectedClient.id)"
                         class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-indigo-100" />
                     <h2 class="text-2xl font-black text-[#131b2e]">
                         {{ selectedClient.firstName }} {{ selectedClient.lastName }}
@@ -335,7 +335,6 @@
 <script setup>
 import { sendQrCodeEmail } from '@/services/emailjs'
 import { useClientStore } from '@/stores/client'
-import { mediaUrl } from '@/utils/media'
 import {
     Delete,
     Edit,
@@ -355,6 +354,13 @@ function qrImageUrl(clientId) {
     if (!clientId) return ''
     const base = import.meta.env.VITE_API_URL || 'https://kenetic-pulse-api.onrender.com/api'
     return `${base.replace(/\/+$/, '')}/clients/${clientId}/qr-code`
+}
+
+// Photo : servie depuis la base de données via l'API (le filesystem Render est éphémère)
+function photoImageUrl(clientId) {
+    if (!clientId) return ''
+    const base = import.meta.env.VITE_API_URL || 'https://kenetic-pulse-api.onrender.com/api'
+    return `${base.replace(/\/+$/, '')}/clients/${clientId}/photo`
 }
 
 // ── État ─────────────────────────────────────────
