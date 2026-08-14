@@ -335,7 +335,8 @@
 <script setup>
 import { sendQrCodeEmail } from '@/services/emailjs'
 import { useClientStore } from '@/stores/client'
-import { mediaUrl } from '@/utils/media'import {
+import { mediaUrl } from '@/utils/media'
+import {
     Delete,
     Edit,
     Loading,
