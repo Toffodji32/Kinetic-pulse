@@ -33,10 +33,17 @@ import SuperAdminSubscriptions from '@/views/SuperAdmin/SuperAdminSubscriptions.
 import WithdrawalsAdmin from '@/views/SuperAdmin/WithdrawalsAdmin.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import PrivacyPolicy from '../views/PrivacyPolicy.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: PrivacyPolicy,
+      meta: { public: true },
+    },
     {
       path: '/',
       name: 'home',
