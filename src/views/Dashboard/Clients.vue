@@ -301,7 +301,7 @@
                 <div v-if="selectedClient.qrCode" class="mb-8">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-[#464554] mb-3">QR Code</h3>
                     <div class="bg-white border border-indigo-100 rounded-xl p-4 flex flex-col items-center shadow-sm">
-                        <img :src="mediaUrl(selectedClient.qrCode)"
+                        <img :src="qrImageUrl(selectedClient.id)"
                             class="w-40 h-40 object-contain" alt="QR Code" />
                         <p class="text-xs text-[#464554] mt-2">Scanner pour valider l'accès</p>
                     </div>
@@ -335,8 +335,7 @@
 <script setup>
 import { sendQrCodeEmail } from '@/services/emailjs'
 import { useClientStore } from '@/stores/client'
-import { mediaUrl } from '@/utils/media'
-import {
+import { mediaUrl } from '@/utils/media'import {
     Delete,
     Edit,
     Loading,
@@ -349,6 +348,13 @@ import Swal from 'sweetalert2'
 import { computed, onMounted, ref } from 'vue'
 
 const clientStore = useClientStore()
+
+// QR code : généré à la volée par le backend (le filesystem Render est éphémère)
+function qrImageUrl(clientId) {
+    if (!clientId) return ''
+    const base = import.meta.env.VITE_API_URL || 'https://kenetic-pulse-api.onrender.com/api'
+    return `${base.replace(/\/+$/, '')}/clients/${clientId}/qr-code`
+}
 
 // ── État ─────────────────────────────────────────
 const search = ref('')
@@ -418,8 +424,8 @@ async function handleCreate() {
             showCreateModal.value = false
 
             let emailMsg = ''
-            if (created.qrCode) {
-                const qrCodeUrl = mediaUrl(created.qrCode)
+            if (created.id) {
+                const qrCodeUrl = qrImageUrl(created.id)
                 try {
                     await sendQrCodeEmail({
                         toEmail: form.value.email,
