@@ -157,7 +157,10 @@
                         <span class="material-symbols-outlined text-emerald-600 text-xl">account_balance_wallet</span>
                         <span class="font-bold text-emerald-700 text-sm">{{ walletStore.wallet ? formatWalletAmount(walletStore.wallet.balanceAvailable) : '—' }}</span>
                     </router-link>
-                    <router-link to="/admin/settings" class="flex items-center gap-3 pl-4 border-l border-slate-200 hover:opacity-80 transition-opacity">
+                    <div class="pl-4 border-l border-slate-200">
+                        <NotificationBell />
+                    </div>
+                    <router-link to="/admin/settings" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         <div class="text-right">
                             <p class="text-sm font-bold text-[#131b2e]">{{ authStore.user?.name || 'Admin' }}</p>
                             <p class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Connecté(e)</p>
@@ -198,6 +201,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useGymAuthStore } from '@/stores/gymAuth'
 import { useWalletStore } from '@/stores/wallet'
+import NotificationBell from '@/components/NotificationBell.vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/plugins/axios'
 
