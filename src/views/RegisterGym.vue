@@ -2,7 +2,7 @@
     <div class="min-h-screen bg-[#faf8ff] flex items-center justify-center p-6">
         <div class="w-full max-w-md">
             <div class="text-center mb-8">
-                <img src="/logo.png" alt="Kinetic Pulse" class="h-14 w-auto mx-auto" />
+                <h1 class="text-3xl font-black font-headline text-indigo-600">Kinetic Pulse</h1>
                 <p class="text-[#464554] font-medium mt-1">Créez votre salle de sport</p>
             </div>
 

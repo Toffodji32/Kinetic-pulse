@@ -9,7 +9,7 @@
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <img src="/logo.png" alt="Kinetic Pulse" class="h-10 w-auto" />
+                    <h1 class="text-xl font-bold font-headline text-slate-900 tracking-tight">Kinetic Pulse</h1>
                     <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">Administration</p>
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-slate-500 hover:text-slate-800">

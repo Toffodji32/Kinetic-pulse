@@ -5,7 +5,9 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
 
         <div class="md:col-span-1">
-          <img src="/logo.png" alt="Kinetic Pulse" class="h-10 w-auto mb-4" />
+          <div class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-headline mb-4">
+            KINETIC PULSE
+          </div>
           <p class="text-zinc-500 text-sm leading-relaxed mb-6">
             La plateforme SaaS qui digitalise les salles de sport en Afrique. QR code, abonnements, boutique en ligne — tout en un.
           </p>

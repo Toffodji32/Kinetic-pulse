@@ -19,7 +19,9 @@
             <div class="w-full max-w-sm">
                 <!-- Logo -->
                 <div class="mb-12">
-                    <img src="/logo.png" alt="Kinetic Pulse" class="h-16 w-auto" />
+                    <h1 class="text-3xl font-black tracking-tighter text-white font-headline">
+                        Kinetic <span class="text-indigo-500">Pulse</span>
+                    </h1>
                     <p class="text-sm text-zinc-500 mt-2 font-medium">Connectez-vous à votre tableau de bord</p>
                 </div>
 
