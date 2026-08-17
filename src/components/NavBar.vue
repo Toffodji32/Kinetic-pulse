@@ -2,9 +2,7 @@
   <nav class="fixed top-0 w-full z-50 bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/5">
     <div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
 
-      <div class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-headline">
-        KINETIC PULSE
-      </div>
+      <img src="/logo.png" alt="Kinetic Pulse" class="h-9 w-auto" />
 
       <div class="hidden md:flex items-center gap-8">
         <a v-for="link in navLinks" :key="link.label"

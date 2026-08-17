@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h1 class="text-xl font-bold font-headline text-white tracking-tight">Super Admin</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-indigo-400 font-semibold mt-1">Kinetic Pulse</p>
+                    <img src="/logo.png" alt="Kinetic Pulse" class="h-8 w-auto mt-2" />
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-white">
                     <span class="material-symbols-outlined">close</span>
